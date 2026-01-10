@@ -9,8 +9,8 @@ Simple CRUD application with a hexagonal architecture.
 Set up a `.env` file with the following variables:
 
 ```env
-POSTGRES_USER=your_username
-POSTGRES_PASSWORD=your_password
+POSTGRES_USER=hexagon_user
+POSTGRES_PASSWORD=hexagon_password
 ```
 
 ```bash

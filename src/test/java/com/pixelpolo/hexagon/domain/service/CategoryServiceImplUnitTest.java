@@ -37,10 +37,8 @@ public class CategoryServiceImplUnitTest {
     @DisplayName("Should find all categories")
     void shouldFindAllCategories() {
         // Arrange
-        Category categoryOne = new Category();
-        categoryOne.setName("Category 1");
-        Category categoryTwo = new Category();
-        categoryTwo.setName("Category 2");
+        Category categoryOne = Category.builder().name("Category 1").build();
+        Category categoryTwo = Category.builder().name("Category 2").build();
         List<Category> expectedCategories = List.of(categoryOne, categoryTwo);
         when(categoryRepository.findAll()).thenReturn(expectedCategories);
 
@@ -61,9 +59,10 @@ public class CategoryServiceImplUnitTest {
     @DisplayName("Should find category by ID")
     void shouldFindCategoryById() {
         // Arrange
-        Category category = new Category();
-        category.setCategoryId(1L);
-        category.setName("Category 1");
+        Category category = Category.builder()
+                .categoryId(1L)
+                .name("Category 1")
+                .build();
         when(categoryRepository.findById(1L)).thenReturn(Optional.of(category));
 
         // Act
@@ -84,8 +83,7 @@ public class CategoryServiceImplUnitTest {
     @DisplayName("Should create a new category")
     void shouldCreateNewCategory() {
         // Arrange
-        Category category = new Category();
-        category.setName("New Category");
+        Category category = Category.builder().name("New Category").build();
         when(categoryRepository.persist(category)).thenReturn(category);
 
         // Act
@@ -104,9 +102,10 @@ public class CategoryServiceImplUnitTest {
     @DisplayName("Should update an existing category")
     void shouldUpdateExistingCategory() {
         // Arrange
-        Category category = new Category();
-        category.setCategoryId(1L);
-        category.setName("Updated Category");
+        Category category = Category.builder()
+                .categoryId(1L)
+                .name("Updated Category")
+                .build();
         when(categoryRepository.persist(category)).thenReturn(category);
 
         // Act
@@ -125,9 +124,10 @@ public class CategoryServiceImplUnitTest {
     @DisplayName("Should soft delete an existing category")
     void shouldDeleteExistingCategory() {
         // Arrange
-        Category category = new Category();
-        category.setCategoryId(1L);
-        category.setName("Category to be deleted");
+        Category category = Category.builder()
+                .categoryId(1L)
+                .name("Category to be deleted")
+                .build();
         when(categoryRepository.softDelete(1L)).thenReturn(category);
 
         // Act
@@ -145,11 +145,6 @@ public class CategoryServiceImplUnitTest {
     @Test
     @DisplayName("Should hard delete an existing category")
     void shouldHardDeleteExistingCategory() {
-        // Arrange
-        Category expected = new Category();
-        expected.setCategoryId(1L);
-        expected.setName("Category to be hard deleted");
-
         // Act
         categoryService.hardDeleteCategory(1L);
 
