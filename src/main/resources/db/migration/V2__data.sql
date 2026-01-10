@@ -14,6 +14,9 @@ VALUES
     (9, 'Assistance & services')
 ;
 
+ALTER TABLE public."category"
+ALTER COLUMN "category_id" RESTART WITH 10;
+
 -- VA Products
 INSERT INTO public."product" ("product_id", "category_id", "name", "description", "created_at", "updated_at")
 VALUES
@@ -39,3 +42,6 @@ VALUES
  'Orion, défense pénale, droit des dommages et intérêt, droit des contrats relatifs à un véhicule et retrait de permis',
  CURRENT_TIMESTAMP, CURRENT_TIMESTAMP)
 ;
+
+ALTER TABLE public."product"
+ALTER COLUMN "product_id" RESTART WITH 8;
