@@ -6,6 +6,13 @@ Simple CRUD application with a hexagonal architecture.
 
 ## Run
 
+Set up a `.env` file with the following variables:
+
+```env
+POSTGRES_USER=your_username
+POSTGRES_PASSWORD=your_password
+```
+
 ```bash
 # Run the application with Docker Compose and rebuild images
 docker compose up -d --build --force-recreate
