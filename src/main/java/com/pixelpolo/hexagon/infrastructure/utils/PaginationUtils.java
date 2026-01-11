@@ -1,0 +1,28 @@
+package com.pixelpolo.hexagon.infrastructure.utils;
+
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Sort;
+import org.springframework.stereotype.Component;
+
+import com.pixelpolo.hexagon.application.exception.BadRequestException;
+
+@Component
+public class PaginationUtils {
+
+    public PageRequest buildPageRequest(int page, int size, String sortBy, String sortDir) {
+        if (page < 0 || size <= 0) {
+            throw new BadRequestException("Page must be >= 0 and size > 0");
+        }
+        return PageRequest.of(page, size, buildSort(sortBy, sortDir));
+    }
+
+    private Sort buildSort(String sortBy, String sortDir) {
+        // If weird values like "desccc" -> fallback to "asc"
+        if ("desc".equalsIgnoreCase(sortDir)) {
+            return Sort.by(sortBy).descending();
+        } else {
+            return Sort.by(sortBy).ascending();
+        }
+    }
+
+}
