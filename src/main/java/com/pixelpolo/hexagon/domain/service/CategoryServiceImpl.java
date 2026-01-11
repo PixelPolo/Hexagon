@@ -1,7 +1,10 @@
 package com.pixelpolo.hexagon.domain.service;
 
-import java.util.List;
 import java.util.Optional;
+
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+import org.springframework.stereotype.Service;
 
 import com.pixelpolo.hexagon.domain.model.Category;
 import com.pixelpolo.hexagon.domain.port.in.CategoryServicePort;
@@ -12,6 +15,7 @@ import com.pixelpolo.hexagon.domain.port.out.CategoryRepositoryPort;
  * Implements the CategoryServicePort (port-in) to provide business operations.
  * Uses CategoryRepositoryPort (port-out) to interact with persistence layer.
  */
+@Service
 public class CategoryServiceImpl implements CategoryServicePort {
 
     private final CategoryRepositoryPort categoryRepository;
@@ -21,7 +25,7 @@ public class CategoryServiceImpl implements CategoryServicePort {
     }
 
     @Override
-    public List<Category> getCategories() {
+    public Page<Category> getCategories(Pageable pageable) {
         return categoryRepository.findAll();
     }
 
