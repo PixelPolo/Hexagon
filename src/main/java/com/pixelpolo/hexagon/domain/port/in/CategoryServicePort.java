@@ -1,7 +1,9 @@
 package com.pixelpolo.hexagon.domain.port.in;
 
-import java.util.List;
 import java.util.Optional;
+
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 
 import com.pixelpolo.hexagon.domain.model.Category;
 
@@ -12,7 +14,7 @@ import com.pixelpolo.hexagon.domain.model.Category;
  */
 public interface CategoryServicePort {
 
-    List<Category> getCategories();
+    Page<Category> getCategories(Pageable pageable);
 
     Optional<Category> getCategoryById(long id);
 
