@@ -4,9 +4,10 @@ Simple CRUD application with a hexagonal architecture.
 - Spring Boot with Flyway and JPA
 - PostgreSQL database
 
+Swagger UI: http://localhost:8080/swagger-ui/index.html
+
 ## TODOs
 
-- Add Swagger/OpenAPI documentation
 - Add tests for category mapper
 - Add tests for category repository
 - Implement Product resource with the same architecture
