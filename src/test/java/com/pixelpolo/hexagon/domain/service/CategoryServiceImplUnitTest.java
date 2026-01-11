@@ -9,6 +9,10 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 
 import com.pixelpolo.hexagon.domain.model.Category;
 import com.pixelpolo.hexagon.domain.port.out.CategoryRepositoryPort;
@@ -39,11 +43,13 @@ public class CategoryServiceImplUnitTest {
         // Arrange
         Category categoryOne = Category.builder().name("Category 1").build();
         Category categoryTwo = Category.builder().name("Category 2").build();
-        List<Category> expectedCategories = List.of(categoryOne, categoryTwo);
-        when(categoryRepository.findAll()).thenReturn(expectedCategories);
+        List<Category> categoryList = List.of(categoryOne, categoryTwo);
+        Pageable pageable = PageRequest.of(0, 10);
+        Page<Category> expectedCategories = new PageImpl<>(categoryList, pageable, categoryList.size());
+        when(categoryRepository.findAll(pageable)).thenReturn(expectedCategories);
 
         // Act
-        List<Category> resultCategories = categoryService.getCategories();
+        Page<Category> resultCategories = categoryService.getCategories(pageable);
 
         // Assert
         assertThat(resultCategories)
@@ -52,7 +58,7 @@ public class CategoryServiceImplUnitTest {
                 .containsExactlyInAnyOrder("Category 1", "Category 2");
 
         // Verify
-        verify(categoryRepository).findAll();
+        verify(categoryRepository).findAll(pageable);
     }
 
     @Test

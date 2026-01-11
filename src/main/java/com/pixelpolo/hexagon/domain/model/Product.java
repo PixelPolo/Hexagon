@@ -22,6 +22,9 @@ import java.util.Objects;
 import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.UpdateTimestamp;
 
+/**
+ * Entity representing a Product in the system.
+ */
 @Entity
 @Getter
 @Setter

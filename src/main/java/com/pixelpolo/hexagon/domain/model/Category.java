@@ -16,6 +16,9 @@ import lombok.ToString;
 import java.time.LocalDateTime;
 import java.util.Objects;
 
+/**
+ * Entity representing a Category in the system.
+ */
 @Entity
 @Getter
 @Setter

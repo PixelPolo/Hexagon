@@ -2,6 +2,9 @@ package com.pixelpolo.hexagon.infrastructure.config;
 
 import org.springframework.context.annotation.Configuration;
 
+/**
+ * Application configuration class.
+ */
 @Configuration
 public class ApplicationConfig {
 

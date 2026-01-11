@@ -7,6 +7,9 @@ import lombok.Data;
 
 import com.pixelpolo.hexagon.application.validation.ValidationMessage;
 
+/**
+ * DTO for creating or updating a category.
+ */
 @Data
 public class CategoryRequest {
 

@@ -1,5 +1,8 @@
 package com.pixelpolo.hexagon.application.validation;
 
+/**
+ * Interface containing validation messages for various constraints.
+ */
 public interface ValidationMessage {
 
     String NULL = "The field must be null.";

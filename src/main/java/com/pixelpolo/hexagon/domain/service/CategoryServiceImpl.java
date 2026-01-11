@@ -26,7 +26,7 @@ public class CategoryServiceImpl implements CategoryServicePort {
 
     @Override
     public Page<Category> getCategories(Pageable pageable) {
-        return categoryRepository.findAll();
+        return categoryRepository.findAll(pageable);
     }
 
     @Override

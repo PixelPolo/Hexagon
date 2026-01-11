@@ -5,6 +5,9 @@ import java.net.URI;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
+/**
+ * Utility class for constructing resource location URIs.
+ */
 @Component
 public class LocationUtils {
 

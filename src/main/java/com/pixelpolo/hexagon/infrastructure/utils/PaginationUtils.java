@@ -6,6 +6,9 @@ import org.springframework.stereotype.Component;
 
 import com.pixelpolo.hexagon.application.exception.BadRequestException;
 
+/**
+ * Utility class for building pagination and sorting requests.
+ */
 @Component
 public class PaginationUtils {
 
