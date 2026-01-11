@@ -30,8 +30,18 @@ public class CategoryServiceImpl implements CategoryServicePort {
     }
 
     @Override
+    public Page<Category> getDeletedCategories(Pageable pageable) {
+        return categoryRepository.findAllDeleted(pageable);
+    }
+
+    @Override
     public Optional<Category> getCategoryById(long id) {
         return categoryRepository.findById(id);
+    }
+
+    @Override
+    public Optional<Category> getCategoryByName(String name) {
+        return categoryRepository.findByName(name);
     }
 
     @Override
@@ -40,18 +50,20 @@ public class CategoryServiceImpl implements CategoryServicePort {
     }
 
     @Override
-    public Category updateCategory(Category category) {
-        return categoryRepository.persist(category);
+    public Category updateCategory(Category existing, Category request) {
+        existing.setName(request.getName());
+        existing.setDeletionDate(request.getDeletionDate());
+        return categoryRepository.persist(existing);
     }
 
     @Override
-    public Category softDeleteCategory(long id) {
-        return categoryRepository.softDelete(id);
+    public Category softDeleteCategory(Category category) {
+        return categoryRepository.softDelete(category);
     }
 
     @Override
-    public void hardDeleteCategory(long id) {
-        categoryRepository.hardDelete(id);
+    public void hardDeleteCategory(Category category) {
+        categoryRepository.hardDelete(category);
     }
 
 }

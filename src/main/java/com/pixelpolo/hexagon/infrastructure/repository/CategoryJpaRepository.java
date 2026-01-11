@@ -1,5 +1,7 @@
 package com.pixelpolo.hexagon.infrastructure.repository;
 
+import java.util.Optional;
+
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
@@ -15,5 +17,7 @@ public interface CategoryJpaRepository extends JpaRepository<Category, Long> {
     Page<Category> findAllByDeletionDateIsNull(Pageable pageable);
 
     Page<Category> findAllByDeletionDateIsNotNull(Pageable pageable);
+
+    Optional<Category> findByName(String name);
 
 }

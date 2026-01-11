@@ -17,6 +17,12 @@ public class GlobalExceptionHandler {
         return ResponseEntity.status(HttpStatus.NOT_FOUND).body(ex.getMessage());
     }
 
+    // Category Exist Exception Handler
+    @ExceptionHandler(CategoryExistException.class)
+    public ResponseEntity<String> handleCategoryExist(CategoryExistException ex) {
+        return ResponseEntity.status(HttpStatus.CONFLICT).body(ex.getMessage());
+    }
+
     // Bad request
     @ExceptionHandler(BadRequestException.class)
     public ResponseEntity<String> handleBadRequest(BadRequestException ex) {

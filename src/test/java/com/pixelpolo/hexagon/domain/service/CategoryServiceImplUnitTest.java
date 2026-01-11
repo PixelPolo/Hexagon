@@ -62,6 +62,29 @@ public class CategoryServiceImplUnitTest {
     }
 
     @Test
+    @DisplayName("Should find all deleted categories")
+    void shouldFindAllDeletedCategories() {
+        // Arrange
+        Category categoryOne = Category.builder().name("Deleted Category 1").build();
+        List<Category> categoryList = List.of(categoryOne);
+        Pageable pageable = PageRequest.of(0, 10);
+        Page<Category> expectedCategories = new PageImpl<>(categoryList, pageable, categoryList.size());
+        when(categoryRepository.findAllDeleted(pageable)).thenReturn(expectedCategories);
+
+        // Act
+        Page<Category> resultCategories = categoryService.getDeletedCategories(pageable);
+
+        // Assert
+        assertThat(resultCategories)
+                .hasSize(1)
+                .extracting(Category::getName)
+                .containsExactlyInAnyOrder("Deleted Category 1");
+
+        // Verify
+        verify(categoryRepository).findAllDeleted(pageable);
+    }
+
+    @Test
     @DisplayName("Should find category by ID")
     void shouldFindCategoryById() {
         // Arrange
@@ -112,10 +135,13 @@ public class CategoryServiceImplUnitTest {
                 .categoryId(1L)
                 .name("Updated Category")
                 .build();
+        Category update = Category.builder()
+                .name("Updated Category")
+                .build();
         when(categoryRepository.persist(category)).thenReturn(category);
 
         // Act
-        Category resultCategory = categoryService.updateCategory(category);
+        Category resultCategory = categoryService.updateCategory(category, update);
 
         // Assert
         assertThat(resultCategory)
@@ -134,10 +160,10 @@ public class CategoryServiceImplUnitTest {
                 .categoryId(1L)
                 .name("Category to be deleted")
                 .build();
-        when(categoryRepository.softDelete(1L)).thenReturn(category);
+        when(categoryRepository.softDelete(category)).thenReturn(category);
 
         // Act
-        Category resultCategory = categoryService.softDeleteCategory(1L);
+        Category resultCategory = categoryService.softDeleteCategory(category);
 
         // Assert
         assertThat(resultCategory)
@@ -145,17 +171,23 @@ public class CategoryServiceImplUnitTest {
                 .isEqualTo("Category to be deleted");
 
         // Verify
-        verify(categoryRepository).softDelete(1L);
+        verify(categoryRepository).softDelete(category);
     }
 
     @Test
     @DisplayName("Should hard delete an existing category")
     void shouldHardDeleteExistingCategory() {
+        // Arrange
+        Category category = Category.builder()
+                .categoryId(1L)
+                .name("Category to be deleted")
+                .build();
+
         // Act
-        categoryService.hardDeleteCategory(1L);
+        categoryService.hardDeleteCategory(category);
 
         // Verify
-        verify(categoryRepository).hardDelete(1L);
+        verify(categoryRepository).hardDelete(category);
     }
 
 }

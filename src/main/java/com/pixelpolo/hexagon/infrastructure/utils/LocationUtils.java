@@ -14,7 +14,7 @@ public class LocationUtils {
     @Value("${api.version}")
     private String apiVersion;
 
-    public URI getLocation(Integer id, String path) {
+    public URI getLocation(Long id, String path) {
         return URI.create("/api/" + apiVersion + "/" + path + "/" + id);
     }
 

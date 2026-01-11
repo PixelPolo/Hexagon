@@ -1,5 +1,6 @@
 package com.pixelpolo.hexagon.infrastructure.adapter.out;
 
+import java.time.LocalDateTime;
 import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -29,27 +30,38 @@ public class CategoryRepositoryAdapter implements CategoryRepositoryPort {
 
     @Override
     public Category persist(Category category) {
-        return null;
+        return categoryJpaRepository.save(category);
     }
 
     @Override
     public Page<Category> findAll(Pageable pageable) {
+        return categoryJpaRepository.findAllByDeletionDateIsNull(pageable);
+    }
+
+    @Override
+    public Page<Category> findAllDeleted(Pageable pageable) {
         return categoryJpaRepository.findAllByDeletionDateIsNotNull(pageable);
     }
 
     @Override
     public Optional<Category> findById(long id) {
-        return Optional.empty();
+        return categoryJpaRepository.findById(id);
     }
 
     @Override
-    public Category softDelete(Long id) {
-        return null;
+    public Optional<Category> findByName(String name) {
+        return categoryJpaRepository.findByName(name);
     }
 
     @Override
-    public void hardDelete(Long id) {
+    public Category softDelete(Category category) {
+        category.setDeletionDate(LocalDateTime.now());
+        return categoryJpaRepository.save(category);
+    }
 
+    @Override
+    public void hardDelete(Category category) {
+        categoryJpaRepository.delete(category);
     }
 
 }

@@ -16,14 +16,18 @@ public interface CategoryServicePort {
 
     Page<Category> getCategories(Pageable pageable);
 
+    Page<Category> getDeletedCategories(Pageable pageable);
+
     Optional<Category> getCategoryById(long id);
+
+    Optional<Category> getCategoryByName(String name);
 
     Category createCategory(Category category);
 
-    Category updateCategory(Category category);
+    Category updateCategory(Category existing, Category request);
 
-    Category softDeleteCategory(long id);
+    Category softDeleteCategory(Category category);
 
-    void hardDeleteCategory(long id);
+    void hardDeleteCategory(Category category);
 
 }

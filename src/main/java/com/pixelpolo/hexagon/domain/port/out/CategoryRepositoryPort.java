@@ -18,10 +18,14 @@ public interface CategoryRepositoryPort {
 
     Page<Category> findAll(Pageable pageable);
 
+    Page<Category> findAllDeleted(Pageable pageable);
+
     Optional<Category> findById(long id);
 
-    Category softDelete(Long id);
+    Optional<Category> findByName(String name);
 
-    void hardDelete(Long id);
+    Category softDelete(Category category);
+
+    void hardDelete(Category category);
 
 }
