@@ -1,5 +1,7 @@
 package com.pixelpolo.hexagon.application.mapper;
 
+import java.util.List;
+
 import org.mapstruct.Mapper;
 
 import com.pixelpolo.hexagon.application.dto.CategoryRequest;
@@ -12,5 +14,9 @@ public interface CategoryMapper {
     CategoryResponse toResponse(Category category);
 
     Category toEntity(CategoryRequest request);
+
+    List<CategoryResponse> toResponseList(List<Category> categories);
+
+    List<Category> toEntityList(List<CategoryRequest> categories);
 
 }
