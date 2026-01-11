@@ -7,9 +7,8 @@ Simple CRUD application with a hexagonal architecture.
 ## TODOs
 
 - Add Swagger/OpenAPI documentation
-- Add tests for mapper
+- Add tests for category mapper
 - Add tests for category repository
-- Add tests for category controller
 - Implement Product resource with the same architecture
 - Add CI/CD pipeline
 
