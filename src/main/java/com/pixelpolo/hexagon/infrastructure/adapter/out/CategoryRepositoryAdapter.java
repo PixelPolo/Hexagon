@@ -10,6 +10,8 @@ import org.springframework.stereotype.Repository;
 
 import com.pixelpolo.hexagon.domain.model.Category;
 import com.pixelpolo.hexagon.domain.port.out.CategoryRepositoryPort;
+import com.pixelpolo.hexagon.infrastructure.entity.CategoryEntity;
+import com.pixelpolo.hexagon.infrastructure.mapper.CategoryEntityMapper;
 import com.pixelpolo.hexagon.infrastructure.repository.CategoryJpaRepository;
 
 /**
@@ -22,46 +24,55 @@ import com.pixelpolo.hexagon.infrastructure.repository.CategoryJpaRepository;
 public class CategoryRepositoryAdapter implements CategoryRepositoryPort {
 
     private final CategoryJpaRepository categoryJpaRepository;
+    private final CategoryEntityMapper categoryEntityMapper;
 
     @Autowired
-    public CategoryRepositoryAdapter(CategoryJpaRepository categoryJpaRepository) {
+    public CategoryRepositoryAdapter(
+            CategoryJpaRepository categoryJpaRepository,
+            CategoryEntityMapper categoryEntityMapper) {
         this.categoryJpaRepository = categoryJpaRepository;
+        this.categoryEntityMapper = categoryEntityMapper;
     }
 
     @Override
     public Category persist(Category category) {
-        return categoryJpaRepository.save(category);
+        CategoryEntity entity = categoryEntityMapper.toEntity(category);
+        categoryJpaRepository.save(entity);
+        return categoryEntityMapper.toDomain(entity);
     }
 
     @Override
     public Page<Category> findAll(Pageable pageable) {
-        return categoryJpaRepository.findAllByDeletionDateIsNull(pageable);
+        Page<CategoryEntity> entities = categoryJpaRepository.findAllByDeletionDateIsNull(pageable);
+        return categoryEntityMapper.toDomainPage(entities);
     }
 
     @Override
     public Page<Category> findAllDeleted(Pageable pageable) {
-        return categoryJpaRepository.findAllByDeletionDateIsNotNull(pageable);
+        Page<CategoryEntity> entities = categoryJpaRepository.findAllByDeletionDateIsNotNull(pageable);
+        return categoryEntityMapper.toDomainPage(entities);
     }
 
     @Override
     public Optional<Category> findById(long id) {
-        return categoryJpaRepository.findById(id);
+        return categoryJpaRepository.findById(id).map(categoryEntityMapper::toDomain);
     }
 
     @Override
     public Optional<Category> findByName(String name) {
-        return categoryJpaRepository.findByName(name);
+        return categoryJpaRepository.findByName(name).map(categoryEntityMapper::toDomain);
     }
 
     @Override
     public Category softDelete(Category category) {
         category.setDeletionDate(LocalDateTime.now());
-        return categoryJpaRepository.save(category);
+        return persist(category);
     }
 
     @Override
     public void hardDelete(Category category) {
-        categoryJpaRepository.delete(category);
+        CategoryEntity entity = categoryEntityMapper.toEntity(category);
+        categoryJpaRepository.delete(entity);
     }
 
 }

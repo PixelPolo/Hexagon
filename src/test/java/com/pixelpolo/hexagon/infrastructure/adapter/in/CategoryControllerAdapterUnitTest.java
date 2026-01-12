@@ -16,9 +16,10 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 
+import com.pixelpolo.hexagon.application.adapter.in.CategoryControllerAdapter;
 import com.pixelpolo.hexagon.application.dto.CategoryRequest;
 import com.pixelpolo.hexagon.application.dto.CategoryResponse;
-import com.pixelpolo.hexagon.application.mapper.CategoryMapper;
+import com.pixelpolo.hexagon.application.mapper.CategoryDtoMapper;
 import com.pixelpolo.hexagon.domain.model.Category;
 import com.pixelpolo.hexagon.domain.port.in.CategoryServicePort;
 import com.pixelpolo.hexagon.infrastructure.utils.LocationUtils;
@@ -41,7 +42,7 @@ class CategoryControllerAdapterUnitTest {
     private CategoryServicePort categoryService;
 
     @Mock
-    private CategoryMapper categoryMapper;
+    private CategoryDtoMapper categoryDtoMapper;
 
     @Mock
     private PaginationUtils paginationUtils;
@@ -73,7 +74,7 @@ class CategoryControllerAdapterUnitTest {
         Page<Category> categoryPage = new PageImpl<>(List.of(category));
         when(paginationUtils.buildPageRequest(0, 10, "categoryId", "asc")).thenReturn(pageRequest);
         when(categoryService.getCategories(pageRequest)).thenReturn(categoryPage);
-        when(categoryMapper.toResponseList(anyList())).thenReturn(List.of(categoryResponse));
+        when(categoryDtoMapper.toResponseList(anyList())).thenReturn(List.of(categoryResponse));
 
         // Act
         ResponseEntity<List<CategoryResponse>> response = categoryController.getAllCategories(
@@ -96,7 +97,7 @@ class CategoryControllerAdapterUnitTest {
         Page<Category> categoryPage = new PageImpl<>(List.of(category));
         when(paginationUtils.buildPageRequest(0, 10, "categoryId", "asc")).thenReturn(pageRequest);
         when(categoryService.getDeletedCategories(pageRequest)).thenReturn(categoryPage);
-        when(categoryMapper.toResponseList(anyList())).thenReturn(List.of(categoryResponse));
+        when(categoryDtoMapper.toResponseList(anyList())).thenReturn(List.of(categoryResponse));
 
         // Act
         ResponseEntity<List<CategoryResponse>> response = categoryController.getAllDeletedCategories(
@@ -117,7 +118,7 @@ class CategoryControllerAdapterUnitTest {
     void shouldGetCategoryById() {
         // Arrange
         when(categoryService.getCategoryById(99L)).thenReturn(Optional.of(category));
-        when(categoryMapper.toResponse(category)).thenReturn(categoryResponse);
+        when(categoryDtoMapper.toResponse(category)).thenReturn(categoryResponse);
 
         // Act
         ResponseEntity<CategoryResponse> response = categoryController.getCategoryById(99L);
@@ -137,10 +138,10 @@ class CategoryControllerAdapterUnitTest {
     @DisplayName("Should create a new category")
     void shouldCreateNewCategory() {
         // Arrange
-        when(categoryMapper.toEntity(categoryRequest)).thenReturn(category);
+        when(categoryDtoMapper.toDomain(categoryRequest)).thenReturn(category);
         when(categoryService.createCategory(category)).thenReturn(category);
         when(locationUtils.getLocation(99L, "categories")).thenReturn(null); // URI not asserted here
-        when(categoryMapper.toResponse(category)).thenReturn(categoryResponse);
+        when(categoryDtoMapper.toResponse(category)).thenReturn(categoryResponse);
 
         // Act
         ResponseEntity<CategoryResponse> response = categoryController.createCategory(categoryRequest);
@@ -163,9 +164,9 @@ class CategoryControllerAdapterUnitTest {
         Category updatedCategory = Category.builder().categoryId(99L).name("Updated Category").build();
         CategoryResponse updatedResponse = CategoryResponse.builder().categoryId(99L).name("Updated Category").build();
         when(categoryService.getCategoryById(99L)).thenReturn(Optional.of(category));
-        when(categoryMapper.toEntity(categoryRequest)).thenReturn(updatedCategory);
+        when(categoryDtoMapper.toDomain(categoryRequest)).thenReturn(updatedCategory);
         when(categoryService.updateCategory(category, updatedCategory)).thenReturn(updatedCategory);
-        when(categoryMapper.toResponse(updatedCategory)).thenReturn(updatedResponse);
+        when(categoryDtoMapper.toResponse(updatedCategory)).thenReturn(updatedResponse);
 
         // Act
         ResponseEntity<CategoryResponse> response = categoryController.updateCategory(99L, categoryRequest);
@@ -187,7 +188,7 @@ class CategoryControllerAdapterUnitTest {
         // Arrange
         when(categoryService.getCategoryById(99L)).thenReturn(Optional.of(category));
         when(categoryService.softDeleteCategory(category)).thenReturn(category);
-        when(categoryMapper.toResponse(category)).thenReturn(categoryResponse);
+        when(categoryDtoMapper.toResponse(category)).thenReturn(categoryResponse);
 
         // Act
         ResponseEntity<CategoryResponse> response = categoryController.deleteCategory(99L, false);

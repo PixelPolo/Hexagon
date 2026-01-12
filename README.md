@@ -8,10 +8,11 @@ Swagger UI: http://localhost:8080/swagger-ui/index.html
 
 ## TODOs
 
-- Add tests for category mapper
+- Add tests for category mappers
 - Add tests for category repository
 - Implement Product resource with the same architecture
-- Add CI/CD pipeline
+- Add testContainer to not use the real database in tests
+- Fix `CategoryEntityMapper` to use MapStruct if possible
 
 ## Flow diagram
 
@@ -19,22 +20,25 @@ Swagger UI: http://localhost:8080/swagger-ui/index.html
 `How`: Define ports and adapters.  
 `Benefits`:
 - The domain (business logic) uses interfaces (ports) that are easy to mock.
-- The infrastructure (adapters) implements these interfaces (ports), allowing easy infrastructure swapping  
+- The infrastructure and application (adapters) implements these interfaces (ports), allowing easy swapping  
 (e.g., changing databases or changing web clients without affecting the domain).
 
+### Example for REST API with database
 ```
-Adapter [Controller from INFRA] <-> Port [Service from DOMAIN] <-> Adapter [Repository from INFRA]
+Adapter [Controller from APPLICATION] <-> Port [Service from DOMAIN] <-> Adapter [Repository from INFRASTRUCTURE]
 ```
 
 Detailled flow:
 
 ```
-Controller (adapter in from INFRA) 
+# Example for REST API with database
+
+Controller (adapter in from APPLICATION) 
     -> ServicePort (port in from DOMAIN) 
         -> ServiceImpl (service from DOMAIN) 
             -> RepositoryPort (port out from DOMAIN) 
-                -> RepositoryAdapter (adapter out from INFRA) 
-                    -> uses JPA Repository (technical detail from INFRA)
+                -> RepositoryAdapter (adapter out from INFRASTRUCTURE) 
+                    -> uses JPA Repository (technical detail from INFRASTRUCTURE)
                         -> interacts with Database
 ```
 
@@ -45,26 +49,29 @@ This structure takes only the Category resource of the project.
 ```
 hexagon
 │
-├── application:    [Handles application-level concerns like DTOs, exception handling, mapping, and validation.]
+├── application:    [Handles application-level concerns like DTOs, exception handling, mapping, and validation]
+│   └── adapter
+│       └── in      (CategoryControllerAdapter implements REST endpoints, uses CategoryServicePort)
 │   └── dto         (CategoryRequest, CategoryResponse)
 │   └── exception   (GlogalExceptionHandler, CategoryNotFoundException, etc.)
-│   └── mapper      (CategoryMapper)
+│   └── mapper      (CategoryDtoMapper)
 │   └── validation  (For dto validation messages)
 │
-├── domain:         [Core business logic and rules.]
+├── domain:         [Core business logic and rules]
 │   └── model
 │   └── port
 │       └── in      (CategoryServicePort interface)
 │       └── out     (CategoryRepositoryPort interface)
 │   └── service     (CategoryServiceImpl implements CategoryServicePort, uses CategoryRepositoryPort)
 │
-├── infrastructure: [Implementation details for interacting with external systems.]
+├── infrastructure: [Implementation details for interacting with external systems]
 │   └── adapter
-│       └── in      (CategoryControllerAdapter implements REST endpoints, uses CategoryServicePort)
 │       └── out     (CategoryRepositoryAdapter implements CategoryRepositoryPort, uses JPA Repository)
-│   └── config      (Spring configurations)
+│   └── entity      (CategoryEntity)
+│   └── mapper      (CategoryEntityMapper)
 │   └── repository  (JPA Repository interfaces)
 │   └── utils       (Utility classes)
+│   └── config      (Spring configurations)
 ```
 
 Note: In some projects, the "port in" are called "use cases", and the "port out" are called "gateways".

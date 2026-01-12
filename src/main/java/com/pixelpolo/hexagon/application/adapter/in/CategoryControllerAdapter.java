@@ -1,4 +1,4 @@
-package com.pixelpolo.hexagon.infrastructure.adapter.in;
+package com.pixelpolo.hexagon.application.adapter.in;
 
 import jakarta.validation.Valid;
 
@@ -24,7 +24,7 @@ import com.pixelpolo.hexagon.application.dto.CategoryRequest;
 import com.pixelpolo.hexagon.application.dto.CategoryResponse;
 import com.pixelpolo.hexagon.application.exception.CategoryExistException;
 import com.pixelpolo.hexagon.application.exception.CategoryNotFoundException;
-import com.pixelpolo.hexagon.application.mapper.CategoryMapper;
+import com.pixelpolo.hexagon.application.mapper.CategoryDtoMapper;
 import com.pixelpolo.hexagon.domain.model.Category;
 import com.pixelpolo.hexagon.domain.port.in.CategoryServicePort;
 import com.pixelpolo.hexagon.infrastructure.utils.LocationUtils;
@@ -40,17 +40,16 @@ import com.pixelpolo.hexagon.infrastructure.utils.PaginationUtils;
 public class CategoryControllerAdapter {
 
     private final CategoryServicePort categoryService;
-    private final CategoryMapper categoryMapper;
+    private final CategoryDtoMapper categoryDtoMapper;
     private final PaginationUtils paginationUtils;
     private final LocationUtils locationUtils;
 
-
     @Autowired
     public CategoryControllerAdapter(
-            CategoryServicePort categoryService, CategoryMapper categoryMapper,
+            CategoryServicePort categoryService, CategoryDtoMapper categoryDtoMapper,
             PaginationUtils paginationUtils, LocationUtils locationUtils) {
         this.categoryService = categoryService;
-        this.categoryMapper = categoryMapper;
+        this.categoryDtoMapper = categoryDtoMapper;
         this.paginationUtils = paginationUtils;
         this.locationUtils = locationUtils;
     }
@@ -68,7 +67,7 @@ public class CategoryControllerAdapter {
         if (categories.isEmpty()) return ResponseEntity.noContent().build();
 
         // 200 OK
-        return ResponseEntity.ok(categoryMapper.toResponseList(categories.getContent()));
+        return ResponseEntity.ok(categoryDtoMapper.toResponseList(categories.getContent()));
     }
 
     // GET /api/v_/categories/deleted?page=_&size=_&sortBy=_&sortDir=_
@@ -84,7 +83,7 @@ public class CategoryControllerAdapter {
         if (categories.isEmpty()) return ResponseEntity.noContent().build();
 
         // 200 OK
-        return ResponseEntity.ok(categoryMapper.toResponseList(categories.getContent()));
+        return ResponseEntity.ok(categoryDtoMapper.toResponseList(categories.getContent()));
     }
 
 
@@ -97,7 +96,7 @@ public class CategoryControllerAdapter {
         if (category.isEmpty()) throw new CategoryNotFoundException(id);
 
         // 200 OK
-        return ResponseEntity.ok(categoryMapper.toResponse(category.get()));
+        return ResponseEntity.ok(categoryDtoMapper.toResponse(category.get()));
     }
 
     // POST /api/v_/categories
@@ -109,9 +108,9 @@ public class CategoryControllerAdapter {
         if (category.isPresent()) throw new CategoryExistException(categoryRequest.getName());
 
         // 201 Created
-        Category created = categoryService.createCategory(categoryMapper.toEntity(categoryRequest));
+        Category created = categoryService.createCategory(categoryDtoMapper.toDomain(categoryRequest));
         URI location = locationUtils.getLocation(created.getCategoryId(), "categories");
-        return ResponseEntity.created(location).body(categoryMapper.toResponse(created));
+        return ResponseEntity.created(location).body(categoryDtoMapper.toResponse(created));
     }
 
     // PUT /api/v_/categories/{id}
@@ -129,8 +128,9 @@ public class CategoryControllerAdapter {
         if (categoryById.isEmpty()) throw new CategoryNotFoundException(id);
 
         // 200 OK
-        Category updated = categoryService.updateCategory(categoryById.get(), categoryMapper.toEntity(categoryRequest));
-        return ResponseEntity.ok(categoryMapper.toResponse(updated));
+        Category updated = categoryService.updateCategory(
+                categoryById.get(), categoryDtoMapper.toDomain(categoryRequest));
+        return ResponseEntity.ok(categoryDtoMapper.toResponse(updated));
     }
 
     // DELETE /api/v_/categories/{id}?hard=false
@@ -151,7 +151,7 @@ public class CategoryControllerAdapter {
 
         // 200 OK
         Category deleted = categoryService.softDeleteCategory(categoryById.get());
-        return ResponseEntity.ok(categoryMapper.toResponse(deleted));
+        return ResponseEntity.ok(categoryDtoMapper.toResponse(deleted));
     }
 
 }

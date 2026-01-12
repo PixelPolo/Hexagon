@@ -9,17 +9,17 @@ import com.pixelpolo.hexagon.application.dto.CategoryResponse;
 import com.pixelpolo.hexagon.domain.model.Category;
 
 /**
- * Mapper interface for converting between Category entities and DTOs.
+ * Mapper interface for converting between Category and DTO.
  */
 @Mapper(componentModel = "spring")
-public interface CategoryMapper {
+public interface CategoryDtoMapper {
 
     CategoryResponse toResponse(Category category);
 
-    Category toEntity(CategoryRequest request);
+    Category toDomain(CategoryRequest request);
 
     List<CategoryResponse> toResponseList(List<Category> categories);
 
-    List<Category> toEntityList(List<CategoryRequest> categories);
+    List<Category> toDomainList(List<CategoryRequest> categories);
 
 }
