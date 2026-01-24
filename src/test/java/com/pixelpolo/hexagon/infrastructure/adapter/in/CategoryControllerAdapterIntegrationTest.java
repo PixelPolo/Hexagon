@@ -1,9 +1,6 @@
 package com.pixelpolo.hexagon.infrastructure.adapter.in;
 
-import java.time.LocalDate;
-
 import org.flywaydb.core.Flyway;
-import org.hamcrest.Matchers;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
@@ -13,8 +10,14 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.webmvc.test.autoconfigure.AutoConfigureMockMvc;
 import org.springframework.test.context.ActiveProfiles;
+import org.springframework.test.context.DynamicPropertyRegistry;
+import org.springframework.test.context.DynamicPropertySource;
 import org.springframework.test.web.servlet.MockMvc;
+import org.testcontainers.containers.PostgreSQLContainer;
+import org.testcontainers.junit.jupiter.Container;
+import org.testcontainers.junit.jupiter.Testcontainers;
 
+import static org.assertj.core.api.Assertions.assertThat;
 import static org.hamcrest.Matchers.hasSize;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
@@ -25,21 +28,57 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 
 /**
  * Integration tests for CategoryControllerAdapter.
- * Uses the real PostgreSQL database with Flyway migrations for setup and teardown.
+ * It uses Testcontainers to spin up a PostgreSQL database for testing.<br>
+ * <a href="https://java.testcontainers.org/test_framework_integration/junit_5/#extension">Testcontainers documentation</a><br>
+ * <a href="https://medium.com/@turanulus/how-to-write-an-integration-test-with-testcontainers-and-postgresql-67425e124753">Interesting article</a><br>
  * Spring Boot Test framework is used with MockMvc for HTTP request simulation.
  * No HTTP calls are actually made through the network, the DispatcherServlet handles them in-memory.
  * All beans (services, repositories, JPA) use real implementations without mocks.
  */
 @ActiveProfiles("test")
+@Testcontainers
 @AutoConfigureMockMvc
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.MOCK)
 class CategoryControllerAdapterIntegrationTest {
 
+    /*
+     * --- TEST CONTAINERS SETUP ---
+     * Docker must be running.
+     * Static container shared across all tests.
+     * Non-static would recreate for each test class.
+     */
+
+    @Container
+    private static final PostgreSQLContainer<?> PSQL_CONTAINER = new PostgreSQLContainer<>("postgres:latest");
     @Autowired
     private MockMvc mockMvc;
 
+    /*
+     * --- FLYWAY SETUP ---
+     * Ensure Flyway migrations are applied before each test
+     * and cleaned up after each test to maintain a consistent state.
+     * application-test.properties must have:
+     *      spring.flyway.enabled=true
+     *      spring.flyway.clean-disabled=false
+     */
+
     @Autowired
     private Flyway flyway;
+
+    @DynamicPropertySource
+    static void postgresqlProperties(DynamicPropertyRegistry registry) {
+        registry.add("spring.datasource.url", PSQL_CONTAINER::getJdbcUrl);
+        registry.add("spring.datasource.username", PSQL_CONTAINER::getUsername);
+        registry.add("spring.datasource.password", PSQL_CONTAINER::getPassword);
+    }
+
+    // --- TESTS SETUP ---
+
+    @AfterEach
+    void cleanUp() {
+        flyway.clean();
+        flyway.migrate();
+    }
 
     @Value("${api.version}")
     private String apiVersion;
@@ -50,11 +89,12 @@ class CategoryControllerAdapterIntegrationTest {
         baseUrl = "/api/" + apiVersion + "/categories";
     }
 
-    @AfterEach
-    void cleanUp() {
-        // Must have spring.flyway.clean-disabled=false
-        flyway.clean();
-        flyway.migrate();
+    // --- TESTS ---
+
+    @Test
+    @DisplayName("Testcontainers PostgreSQL container is running")
+    void shouldHaveRunningPostgreSQLContainer() {
+        assertThat(PSQL_CONTAINER.isRunning()).isTrue();
     }
 
     @Test
@@ -159,12 +199,9 @@ class CategoryControllerAdapterIntegrationTest {
         mockMvc.perform(delete(location))
                 .andExpect(status().isNoContent());
 
-        // Verify the category is soft deleted
+        // Verify the category is soft deleted (should not be found)
         mockMvc.perform(get(location))
-                .andExpect(status().isOk())
-                .andExpect(jsonPath("$.name").value("Category to be deleted"))
-                .andExpect(jsonPath("$.deletionDate").isNotEmpty())
-                .andExpect(jsonPath("$.deletionDate", Matchers.startsWith(LocalDate.now().toString())));
+                .andExpect(status().isNotFound());
     }
 
     @Test
@@ -180,11 +217,11 @@ class CategoryControllerAdapterIntegrationTest {
                 .getHeader("Location");
 
         // Hard delete the category
+        assert location != null;
         mockMvc.perform(delete(location + "?hard=true"))
                 .andExpect(status().isNoContent());
 
         // Verify the category is deleted
-        assert location != null;
         mockMvc.perform(get(location))
                 .andExpect(status().isNotFound());
     }

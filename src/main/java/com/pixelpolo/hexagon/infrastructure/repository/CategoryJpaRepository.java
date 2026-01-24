@@ -18,6 +18,8 @@ public interface CategoryJpaRepository extends JpaRepository<CategoryEntity, Lon
 
     Page<CategoryEntity> findAllByDeletionDateIsNotNull(Pageable pageable);
 
-    Optional<CategoryEntity> findByName(String name);
+    Optional<CategoryEntity> findByCategoryIdAndDeletionDateIsNull(Long id);
+
+    Optional<CategoryEntity> findByNameAndDeletionDateIsNull(String name);
 
 }

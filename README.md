@@ -1,15 +1,15 @@
 # Hexagon
 
 Simple CRUD application with a hexagonal architecture.  
-- Spring Boot with Flyway and JPA
-- PostgreSQL database
+- Spring Boot with Flyway, JPA and PostgreSQL.
+- Integration test with Testcontainers and flyway migrations.
+- Unit test with JUnit and Mockito.
 
 Swagger UI: http://localhost:8080/swagger-ui/index.html
 
 ## TODOs
 
 - Implement Product resource with the same architecture
-- Add testContainer to not use the real database in tests
 
 ## Flow diagram
 

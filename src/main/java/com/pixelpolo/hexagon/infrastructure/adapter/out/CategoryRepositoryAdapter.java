@@ -49,14 +49,14 @@ public class CategoryRepositoryAdapter implements CategoryRepositoryPort {
 
     @Override
     public Category findById(long id) {
-        CategoryEntity entity = categoryJpaRepository.findById(id)
+        CategoryEntity entity = categoryJpaRepository.findByCategoryIdAndDeletionDateIsNull(id)
                 .orElseThrow(() -> new CategoryNotFoundException(id));
         return categoryEntityMapper.toDomain(entity);
     }
 
     @Override
     public Category findByName(String name) {
-        CategoryEntity entity = categoryJpaRepository.findByName(name)
+        CategoryEntity entity = categoryJpaRepository.findByNameAndDeletionDateIsNull(name)
                 .orElseThrow(() -> new CategoryNotFoundException(name));
         return categoryEntityMapper.toDomain(entity);
     }
