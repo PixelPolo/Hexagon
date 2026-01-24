@@ -1,10 +1,10 @@
-package com.pixelpolo.hexagon.infrastructure.utils;
+package com.pixelpolo.hexagon.common.utils;
 
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Component;
 
-import com.pixelpolo.hexagon.application.exception.BadRequestException;
+import com.pixelpolo.hexagon.common.exception.BadRequestException;
 
 /**
  * Utility class for building pagination and sorting requests.

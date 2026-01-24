@@ -1,7 +1,6 @@
 package com.pixelpolo.hexagon.infrastructure.adapter.in;
 
 import java.util.List;
-import java.util.Optional;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
@@ -20,10 +19,10 @@ import com.pixelpolo.hexagon.application.adapter.in.CategoryControllerAdapter;
 import com.pixelpolo.hexagon.application.dto.CategoryRequest;
 import com.pixelpolo.hexagon.application.dto.CategoryResponse;
 import com.pixelpolo.hexagon.application.mapper.CategoryDtoMapper;
+import com.pixelpolo.hexagon.common.utils.LocationUtils;
+import com.pixelpolo.hexagon.common.utils.PaginationUtils;
 import com.pixelpolo.hexagon.domain.model.Category;
 import com.pixelpolo.hexagon.domain.port.in.CategoryServicePort;
-import com.pixelpolo.hexagon.infrastructure.utils.LocationUtils;
-import com.pixelpolo.hexagon.infrastructure.utils.PaginationUtils;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.ArgumentMatchers.anyList;
@@ -117,7 +116,7 @@ class CategoryControllerAdapterUnitTest {
     @DisplayName("Should get category by ID")
     void shouldGetCategoryById() {
         // Arrange
-        when(categoryService.getCategoryById(99L)).thenReturn(Optional.of(category));
+        when(categoryService.getCategoryById(99L)).thenReturn(category);
         when(categoryDtoMapper.toResponse(category)).thenReturn(categoryResponse);
 
         // Act
@@ -161,11 +160,10 @@ class CategoryControllerAdapterUnitTest {
     @DisplayName("Should update an existing category")
     void shouldUpdateExistingCategory() {
         // Arrange
-        Category updatedCategory = Category.builder().categoryId(99L).name("Updated Category").build();
+        Category updatedCategory = Category.builder().categoryId(99L).name("Category").build();
         CategoryResponse updatedResponse = CategoryResponse.builder().categoryId(99L).name("Updated Category").build();
-        when(categoryService.getCategoryById(99L)).thenReturn(Optional.of(category));
         when(categoryDtoMapper.toDomain(categoryRequest)).thenReturn(updatedCategory);
-        when(categoryService.updateCategory(category, updatedCategory)).thenReturn(updatedCategory);
+        when(categoryService.updateCategory(99L, updatedCategory)).thenReturn(updatedCategory);
         when(categoryDtoMapper.toResponse(updatedCategory)).thenReturn(updatedResponse);
 
         // Act
@@ -179,37 +177,27 @@ class CategoryControllerAdapterUnitTest {
         assertThat(response.getBody().getName()).isEqualTo("Updated Category");
 
         // Verify
-        verify(categoryService).updateCategory(category, updatedCategory);
+        verify(categoryService).updateCategory(99L, updatedCategory);
     }
 
     @Test
     @DisplayName("Should soft delete a category")
     void  shouldDeleteCategory() {
-        // Arrange
-        when(categoryService.getCategoryById(99L)).thenReturn(Optional.of(category));
-        when(categoryService.softDeleteCategory(category)).thenReturn(category);
-        when(categoryDtoMapper.toResponse(category)).thenReturn(categoryResponse);
-
         // Act
         ResponseEntity<CategoryResponse> response = categoryController.deleteCategory(99L, false);
 
         // Assert
         assertThat(response).isNotNull();
-        assertThat(response.getStatusCode()).isEqualTo(HttpStatus.OK);
-        assertThat(response.getBody()).isNotNull();
-        assertThat(response.getBody().getCategoryId()).isEqualTo(99L);
-        assertThat(response.getBody().getName()).isEqualTo(category.getName());
+        assertThat(response.getStatusCode()).isEqualTo(HttpStatus.NO_CONTENT);
+        assertThat(response.getBody()).isNull();
 
         // Verify
-        verify(categoryService).softDeleteCategory(category);
+        verify(categoryService).softDeleteCategory(99L);
     }
 
     @Test
     @DisplayName("Should hard delete a category")
     void  shouldHardDeleteCategory() {
-        // Arrange
-        when(categoryService.getCategoryById(99L)).thenReturn(Optional.of(category));
-
         // Act
         ResponseEntity<CategoryResponse> response = categoryController.deleteCategory(99L, true);
 
@@ -219,7 +207,7 @@ class CategoryControllerAdapterUnitTest {
         assertThat(response.getBody()).isNull();
 
         // Verify
-        verify(categoryService).hardDeleteCategory(category);
+        verify(categoryService).hardDeleteCategory(99L);
     }
 
 }

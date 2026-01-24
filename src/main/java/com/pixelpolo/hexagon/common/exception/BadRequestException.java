@@ -1,4 +1,4 @@
-package com.pixelpolo.hexagon.application.exception;
+package com.pixelpolo.hexagon.common.exception;
 
 /**
  * Exception thrown when a bad request is made.

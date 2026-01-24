@@ -5,21 +5,25 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 
+import com.pixelpolo.hexagon.common.exception.BadRequestException;
+import com.pixelpolo.hexagon.common.exception.ExistException;
+import com.pixelpolo.hexagon.common.exception.NotFoundException;
+
 /**
- * Global exception handler for the application.
+ * Global exception handler for the application layer.
  */
 @ControllerAdvice
 public class GlobalExceptionHandler {
 
-    // Category Not Found Exception Handler
-    @ExceptionHandler(CategoryNotFoundException.class)
-    public ResponseEntity<String> handleNotFound(CategoryNotFoundException ex) {
+    // Not Found Exception Handler
+    @ExceptionHandler(NotFoundException.class)
+    public ResponseEntity<String> handleNotFound(NotFoundException ex) {
         return ResponseEntity.status(HttpStatus.NOT_FOUND).body(ex.getMessage());
     }
 
-    // Category Exist Exception Handler
-    @ExceptionHandler(CategoryExistException.class)
-    public ResponseEntity<String> handleCategoryExist(CategoryExistException ex) {
+    // Exist Exception Handler
+    @ExceptionHandler(ExistException.class)
+    public ResponseEntity<String> handleCategoryExist(ExistException ex) {
         return ResponseEntity.status(HttpStatus.CONFLICT).body(ex.getMessage());
     }
 

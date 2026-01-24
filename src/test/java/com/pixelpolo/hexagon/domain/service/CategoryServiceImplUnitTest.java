@@ -1,7 +1,6 @@
 package com.pixelpolo.hexagon.domain.service;
 
 import java.util.List;
-import java.util.Optional;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
@@ -14,6 +13,7 @@ import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 
+import com.pixelpolo.hexagon.common.exception.category.CategoryNotFoundException;
 import com.pixelpolo.hexagon.domain.model.Category;
 import com.pixelpolo.hexagon.domain.port.out.CategoryRepositoryPort;
 
@@ -92,15 +92,13 @@ public class CategoryServiceImplUnitTest {
                 .categoryId(1L)
                 .name("Category 1")
                 .build();
-        when(categoryRepository.findById(1L)).thenReturn(Optional.of(category));
+        when(categoryRepository.findById(1L)).thenReturn(category);
 
         // Act
-        Optional<Category> resultCategory = categoryService.getCategoryById(1L);
+        Category resultCategory = categoryService.getCategoryById(1L);
 
         // Assert
         assertThat(resultCategory)
-                .isPresent()
-                .get()
                 .extracting(Category::getName)
                 .isEqualTo("Category 1");
 
@@ -113,6 +111,7 @@ public class CategoryServiceImplUnitTest {
     void shouldCreateNewCategory() {
         // Arrange
         Category category = Category.builder().name("New Category").build();
+        when(categoryRepository.findByName("New Category")).thenThrow(CategoryNotFoundException.class);
         when(categoryRepository.persist(category)).thenReturn(category);
 
         // Act
@@ -133,15 +132,17 @@ public class CategoryServiceImplUnitTest {
         // Arrange
         Category category = Category.builder()
                 .categoryId(1L)
-                .name("Updated Category")
+                .name("Category")
                 .build();
         Category update = Category.builder()
                 .name("Updated Category")
                 .build();
+        when(categoryRepository.findByName("Updated Category")).thenThrow(CategoryNotFoundException.class);
+        when(categoryRepository.findById(1L)).thenReturn(category);
         when(categoryRepository.persist(category)).thenReturn(category);
 
         // Act
-        Category resultCategory = categoryService.updateCategory(category, update);
+        Category resultCategory = categoryService.updateCategory(1L, update);
 
         // Assert
         assertThat(resultCategory)
@@ -154,24 +155,18 @@ public class CategoryServiceImplUnitTest {
 
     @Test
     @DisplayName("Should soft delete an existing category")
-    void shouldDeleteExistingCategory() {
+    void shouldSoftDeleteExistingCategory() {
         // Arrange
         Category category = Category.builder()
                 .categoryId(1L)
                 .name("Category to be deleted")
                 .build();
-        when(categoryRepository.softDelete(category)).thenReturn(category);
 
         // Act
-        Category resultCategory = categoryService.softDeleteCategory(category);
-
-        // Assert
-        assertThat(resultCategory)
-                .extracting(Category::getName)
-                .isEqualTo("Category to be deleted");
+        categoryService.softDeleteCategory(category.getCategoryId());
 
         // Verify
-        verify(categoryRepository).softDelete(category);
+        verify(categoryRepository).softDelete(1L);
     }
 
     @Test
@@ -184,10 +179,10 @@ public class CategoryServiceImplUnitTest {
                 .build();
 
         // Act
-        categoryService.hardDeleteCategory(category);
+        categoryService.hardDeleteCategory(category.getCategoryId());
 
         // Verify
-        verify(categoryRepository).hardDelete(category);
+        verify(categoryRepository).hardDelete(1L);
     }
 
 }

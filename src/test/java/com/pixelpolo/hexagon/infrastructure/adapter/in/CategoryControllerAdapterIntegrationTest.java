@@ -73,7 +73,8 @@ class CategoryControllerAdapterIntegrationTest {
         mockMvc.perform(get(baseUrl + "/deleted")
                                 .param("page", "0")
                                 .param("size", "10"))
-                .andExpect(status().isNoContent());
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$", hasSize(0)));
     }
 
     @Test
@@ -144,16 +145,26 @@ class CategoryControllerAdapterIntegrationTest {
     @Test
     @DisplayName("DELETE /api/{version}/categories/1 - Should soft delete category")
     void shouldSoftDeleteCategory() throws Exception {
-        mockMvc.perform(delete(baseUrl + "/1"))
-                .andExpect(status().isOk())
-                .andExpect(jsonPath("$.categoryId").value(1))
-                .andExpect(jsonPath("$.deletionDate").isNotEmpty());
+        // Create a category to delete and get its location
+        String location = mockMvc.perform(post(baseUrl)
+                                  .contentType("application/json")
+                                  .content("{\"name\":\"Category to be deleted\"}"))
+                .andExpect(status().isCreated())
+                .andReturn()
+                .getResponse()
+                .getHeader("Location");
 
-        // Verify the date is today
-        String today = LocalDate.now().toString();
-        mockMvc.perform(get(baseUrl + "/1"))
+        // Soft delete the category
+        assert location != null;
+        mockMvc.perform(delete(location))
+                .andExpect(status().isNoContent());
+
+        // Verify the category is soft deleted
+        mockMvc.perform(get(location))
                 .andExpect(status().isOk())
-                .andExpect(jsonPath("$.deletionDate").value(Matchers.startsWith(today)));
+                .andExpect(jsonPath("$.name").value("Category to be deleted"))
+                .andExpect(jsonPath("$.deletionDate").isNotEmpty())
+                .andExpect(jsonPath("$.deletionDate", Matchers.startsWith(LocalDate.now().toString())));
     }
 
     @Test

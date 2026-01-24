@@ -1,11 +1,13 @@
 package com.pixelpolo.hexagon.domain.service;
 
-import java.util.Optional;
+import lombok.RequiredArgsConstructor;
 
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
+import com.pixelpolo.hexagon.common.exception.category.CategoryExistException;
+import com.pixelpolo.hexagon.common.exception.category.CategoryNotFoundException;
 import com.pixelpolo.hexagon.domain.model.Category;
 import com.pixelpolo.hexagon.domain.port.in.CategoryServicePort;
 import com.pixelpolo.hexagon.domain.port.out.CategoryRepositoryPort;
@@ -16,13 +18,10 @@ import com.pixelpolo.hexagon.domain.port.out.CategoryRepositoryPort;
  * Uses CategoryRepositoryPort (port-out) to interact with persistence layer.
  */
 @Service
+@RequiredArgsConstructor
 public class CategoryServiceImpl implements CategoryServicePort {
 
     private final CategoryRepositoryPort categoryRepository;
-
-    public CategoryServiceImpl(CategoryRepositoryPort categoryRepository) {
-        this.categoryRepository = categoryRepository;
-    }
 
     @Override
     public Page<Category> getCategories(Pageable pageable) {
@@ -35,35 +34,40 @@ public class CategoryServiceImpl implements CategoryServicePort {
     }
 
     @Override
-    public Optional<Category> getCategoryById(long id) {
+    public Category getCategoryById(long id) {
         return categoryRepository.findById(id);
     }
 
     @Override
-    public Optional<Category> getCategoryByName(String name) {
-        return categoryRepository.findByName(name);
-    }
-
-    @Override
     public Category createCategory(Category category) {
-        return categoryRepository.persist(category);
+        try {
+            categoryRepository.findByName(category.getName());
+            throw new CategoryExistException(category.getName());
+        } catch (CategoryNotFoundException e) {
+            return categoryRepository.persist(category);
+        }
     }
 
     @Override
-    public Category updateCategory(Category existing, Category request) {
-        existing.setName(request.getName());
-        existing.setDeletionDate(request.getDeletionDate());
-        return categoryRepository.persist(existing);
+    public Category updateCategory(long id, Category request) {
+        try {
+            categoryRepository.findByName(request.getName());
+            throw new CategoryExistException(request.getName());
+        } catch (CategoryNotFoundException e) {
+            Category existing = categoryRepository.findById(id);
+            existing.setName(request.getName());
+            return categoryRepository.persist(existing);
+        }
     }
 
     @Override
-    public Category softDeleteCategory(Category category) {
-        return categoryRepository.softDelete(category);
+    public void softDeleteCategory(long id) {
+        categoryRepository.softDelete(id);
     }
 
     @Override
-    public void hardDeleteCategory(Category category) {
-        categoryRepository.hardDelete(category);
+    public void hardDeleteCategory(long id) {
+        categoryRepository.hardDelete(id);
     }
 
 }

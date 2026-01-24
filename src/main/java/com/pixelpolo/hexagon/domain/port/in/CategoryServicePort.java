@@ -1,7 +1,5 @@
 package com.pixelpolo.hexagon.domain.port.in;
 
-import java.util.Optional;
-
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 
@@ -18,16 +16,14 @@ public interface CategoryServicePort {
 
     Page<Category> getDeletedCategories(Pageable pageable);
 
-    Optional<Category> getCategoryById(long id);
-
-    Optional<Category> getCategoryByName(String name);
+    Category getCategoryById(long id);
 
     Category createCategory(Category category);
 
-    Category updateCategory(Category existing, Category request);
+    Category updateCategory(long id, Category request);
 
-    Category softDeleteCategory(Category category);
+    void softDeleteCategory(long id);
 
-    void hardDeleteCategory(Category category);
+    void hardDeleteCategory(long id);
 
 }

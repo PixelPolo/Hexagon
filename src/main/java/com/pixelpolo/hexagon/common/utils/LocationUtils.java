@@ -1,4 +1,4 @@
-package com.pixelpolo.hexagon.infrastructure.utils;
+package com.pixelpolo.hexagon.common.utils;
 
 import java.net.URI;
 

@@ -8,11 +8,8 @@ Swagger UI: http://localhost:8080/swagger-ui/index.html
 
 ## TODOs
 
-- Add tests for category mappers
-- Add tests for category repository
 - Implement Product resource with the same architecture
 - Add testContainer to not use the real database in tests
-- Fix `CategoryEntityMapper` to use MapStruct if possible
 
 ## Flow diagram
 
@@ -44,34 +41,43 @@ Controller (adapter in from APPLICATION)
 
 ## Folder structure
 
-This structure takes only the Category resource of the project.
+This structure takes only the Category resource of the project.  
+Hexagonal pattern:
+- Domain exposes PORT IN and PORT OUT
+- Domain service implements PORT IN and uses PORT OUT
+- Application ADAPTER IN uses PORT IN implemented by Domain service
+- Infrastructure ADAPTER OUT implements PORT OUT used by Domain service
 
 ```
 hexagon
 │
 ├── application:    [Handles application-level concerns like DTOs, exception handling, mapping, and validation]
 │   └── adapter
-│       └── in      (CategoryControllerAdapter implements REST endpoints, uses CategoryServicePort)
-│   └── dto         (CategoryRequest, CategoryResponse)
-│   └── exception   (GlogalExceptionHandler, CategoryNotFoundException, etc.)
-│   └── mapper      (CategoryDtoMapper)
-│   └── validation  (For dto validation messages)
+│       └── in          CategoryControllerAdapter implements REST endpoints, uses CategoryServicePort
+│   └── dto             CategoryRequest, CategoryResponse
+│   └── exception       GlogalExceptionHandler
+│   └── mapper          CategoryDtoMapper
+│   └── validation      ValidationMessage for dto validation
 │
 ├── domain:         [Core business logic and rules]
-│   └── model
+│   └── model           Category domain model
 │   └── port
-│       └── in      (CategoryServicePort interface)
-│       └── out     (CategoryRepositoryPort interface)
-│   └── service     (CategoryServiceImpl implements CategoryServicePort, uses CategoryRepositoryPort)
+│       └── in          CategoryServicePort interface
+│       └── out         CategoryRepositoryPort interface
+│   └── service         CategoryServiceImpl implements CategoryServicePort, uses CategoryRepositoryPort
 │
 ├── infrastructure: [Implementation details for interacting with external systems]
 │   └── adapter
-│       └── out     (CategoryRepositoryAdapter implements CategoryRepositoryPort, uses JPA Repository)
-│   └── entity      (CategoryEntity)
-│   └── mapper      (CategoryEntityMapper)
-│   └── repository  (JPA Repository interfaces)
-│   └── utils       (Utility classes)
-│   └── config      (Spring configurations)
+│       └── out         CategoryRepositoryAdapter implements CategoryRepositoryPort, uses JPA Repository
+│   └── entity          CategoryEntity
+│   └── mapper          CategoryEntityMapper
+│   └── repository      JPA Repository interfaces
+│   └── utils           Utility classes
+|
+└── common:         [Shared resources across layers]
+    └── config          Spring configurations
+    └── exception       NotFoundException, ExistException, BadRequestException, etc.
+    └── utils           Common utility classes
 ```
 
 Note: In some projects, the "port in" are called "use cases", and the "port out" are called "gateways".
@@ -86,7 +92,7 @@ POSTGRES_PASSWORD=hexagon_password
 ```
 
 ```bash
-# Run the application with Docker Compose and rebuild images
+# Run the application with Docker Compose, rebuild images and recreate volumes
 docker compose up -d --build --force-recreate
 ```
 

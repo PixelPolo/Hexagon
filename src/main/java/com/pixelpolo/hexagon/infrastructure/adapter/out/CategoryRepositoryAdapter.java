@@ -1,13 +1,14 @@
 package com.pixelpolo.hexagon.infrastructure.adapter.out;
 
-import java.time.LocalDateTime;
-import java.util.Optional;
+import lombok.RequiredArgsConstructor;
 
-import org.springframework.beans.factory.annotation.Autowired;
+import java.time.LocalDateTime;
+
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Repository;
 
+import com.pixelpolo.hexagon.common.exception.category.CategoryNotFoundException;
 import com.pixelpolo.hexagon.domain.model.Category;
 import com.pixelpolo.hexagon.domain.port.out.CategoryRepositoryPort;
 import com.pixelpolo.hexagon.infrastructure.entity.CategoryEntity;
@@ -21,18 +22,11 @@ import com.pixelpolo.hexagon.infrastructure.repository.CategoryJpaRepository;
  * Keeps the domain logic decoupled from external implementations.
  */
 @Repository
+@RequiredArgsConstructor
 public class CategoryRepositoryAdapter implements CategoryRepositoryPort {
 
     private final CategoryJpaRepository categoryJpaRepository;
     private final CategoryEntityMapper categoryEntityMapper;
-
-    @Autowired
-    public CategoryRepositoryAdapter(
-            CategoryJpaRepository categoryJpaRepository,
-            CategoryEntityMapper categoryEntityMapper) {
-        this.categoryJpaRepository = categoryJpaRepository;
-        this.categoryEntityMapper = categoryEntityMapper;
-    }
 
     @Override
     public Category persist(Category category) {
@@ -54,24 +48,31 @@ public class CategoryRepositoryAdapter implements CategoryRepositoryPort {
     }
 
     @Override
-    public Optional<Category> findById(long id) {
-        return categoryJpaRepository.findById(id).map(categoryEntityMapper::toDomain);
+    public Category findById(long id) {
+        CategoryEntity entity = categoryJpaRepository.findById(id)
+                .orElseThrow(() -> new CategoryNotFoundException(id));
+        return categoryEntityMapper.toDomain(entity);
     }
 
     @Override
-    public Optional<Category> findByName(String name) {
-        return categoryJpaRepository.findByName(name).map(categoryEntityMapper::toDomain);
+    public Category findByName(String name) {
+        CategoryEntity entity = categoryJpaRepository.findByName(name)
+                .orElseThrow(() -> new CategoryNotFoundException(name));
+        return categoryEntityMapper.toDomain(entity);
     }
 
     @Override
-    public Category softDelete(Category category) {
-        category.setDeletionDate(LocalDateTime.now());
-        return persist(category);
+    public void softDelete(long id) {
+        CategoryEntity entity = categoryJpaRepository.findById(id)
+                .orElseThrow(() -> new CategoryNotFoundException(id));
+        entity.setDeletionDate(LocalDateTime.now());
+        categoryJpaRepository.save(entity);
     }
 
     @Override
-    public void hardDelete(Category category) {
-        CategoryEntity entity = categoryEntityMapper.toEntity(category);
+    public void hardDelete(long id) {
+        CategoryEntity entity = categoryJpaRepository.findById(id)
+                .orElseThrow(() -> new CategoryNotFoundException(id));
         categoryJpaRepository.delete(entity);
     }
 

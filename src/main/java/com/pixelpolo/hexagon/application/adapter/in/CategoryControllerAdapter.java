@@ -1,12 +1,11 @@
 package com.pixelpolo.hexagon.application.adapter.in;
 
 import jakarta.validation.Valid;
+import lombok.RequiredArgsConstructor;
 
 import java.net.URI;
 import java.util.List;
-import java.util.Optional;
 
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.http.ResponseEntity;
@@ -22,13 +21,11 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.pixelpolo.hexagon.application.dto.CategoryRequest;
 import com.pixelpolo.hexagon.application.dto.CategoryResponse;
-import com.pixelpolo.hexagon.application.exception.CategoryExistException;
-import com.pixelpolo.hexagon.application.exception.CategoryNotFoundException;
 import com.pixelpolo.hexagon.application.mapper.CategoryDtoMapper;
 import com.pixelpolo.hexagon.domain.model.Category;
 import com.pixelpolo.hexagon.domain.port.in.CategoryServicePort;
-import com.pixelpolo.hexagon.infrastructure.utils.LocationUtils;
-import com.pixelpolo.hexagon.infrastructure.utils.PaginationUtils;
+import com.pixelpolo.hexagon.common.utils.LocationUtils;
+import com.pixelpolo.hexagon.common.utils.PaginationUtils;
 
 /**
  * Category REST Controller as an ADAPTER-IN in Hexagonal Architecture.
@@ -37,22 +34,13 @@ import com.pixelpolo.hexagon.infrastructure.utils.PaginationUtils;
  */
 @RestController
 @RequestMapping("/api/${api.version}/categories")
+@RequiredArgsConstructor
 public class CategoryControllerAdapter {
 
     private final CategoryServicePort categoryService;
     private final CategoryDtoMapper categoryDtoMapper;
     private final PaginationUtils paginationUtils;
     private final LocationUtils locationUtils;
-
-    @Autowired
-    public CategoryControllerAdapter(
-            CategoryServicePort categoryService, CategoryDtoMapper categoryDtoMapper,
-            PaginationUtils paginationUtils, LocationUtils locationUtils) {
-        this.categoryService = categoryService;
-        this.categoryDtoMapper = categoryDtoMapper;
-        this.paginationUtils = paginationUtils;
-        this.locationUtils = locationUtils;
-    }
 
     // GET /api/v_/categories?page=_&size=_&sortBy=_&sortDir=_
     @GetMapping
@@ -61,12 +49,9 @@ public class CategoryControllerAdapter {
             @RequestParam(defaultValue = "categoryId") String sortBy,
             @RequestParam(defaultValue = "asc") String sortDir) {
 
-        // 204 No Content
+        // 200 OK
         PageRequest pageRequest = paginationUtils.buildPageRequest(page, size, sortBy, sortDir);
         Page<Category> categories = categoryService.getCategories(pageRequest);
-        if (categories.isEmpty()) return ResponseEntity.noContent().build();
-
-        // 200 OK
         return ResponseEntity.ok(categoryDtoMapper.toResponseList(categories.getContent()));
     }
 
@@ -77,35 +62,24 @@ public class CategoryControllerAdapter {
             @RequestParam(defaultValue = "categoryId") String sortBy,
             @RequestParam(defaultValue = "asc") String sortDir) {
 
-        // 204 No Content
+        // 200 OK
         PageRequest pageRequest = paginationUtils.buildPageRequest(page, size, sortBy, sortDir);
         Page<Category> categories = categoryService.getDeletedCategories(pageRequest);
-        if (categories.isEmpty()) return ResponseEntity.noContent().build();
-
-        // 200 OK
         return ResponseEntity.ok(categoryDtoMapper.toResponseList(categories.getContent()));
     }
-
 
     // GET /api/v_/categories/{id}
     @GetMapping("/{id}")
     public ResponseEntity<CategoryResponse> getCategoryById(@PathVariable Long id) {
 
-        // 404 Not Found
-        Optional<Category> category = categoryService.getCategoryById(id);
-        if (category.isEmpty()) throw new CategoryNotFoundException(id);
-
         // 200 OK
-        return ResponseEntity.ok(categoryDtoMapper.toResponse(category.get()));
+        Category category = categoryService.getCategoryById(id);
+        return ResponseEntity.ok(categoryDtoMapper.toResponse(category));
     }
 
     // POST /api/v_/categories
     @PostMapping
     public ResponseEntity<CategoryResponse> createCategory(@Valid @RequestBody CategoryRequest categoryRequest) {
-
-        // 409 Conflict
-        Optional<Category> category = categoryService.getCategoryByName(categoryRequest.getName());
-        if (category.isPresent()) throw new CategoryExistException(categoryRequest.getName());
 
         // 201 Created
         Category created = categoryService.createCategory(categoryDtoMapper.toDomain(categoryRequest));
@@ -119,17 +93,8 @@ public class CategoryControllerAdapter {
             @PathVariable Long id,
             @Valid @RequestBody CategoryRequest categoryRequest) {
 
-        // 409 Conflict
-        Optional<Category> categoryByName = categoryService.getCategoryByName(categoryRequest.getName());
-        if (categoryByName.isPresent()) throw new CategoryExistException(categoryRequest.getName());
-
-        // 404 Not Found
-        Optional<Category> categoryById = categoryService.getCategoryById(id);
-        if (categoryById.isEmpty()) throw new CategoryNotFoundException(id);
-
         // 200 OK
-        Category updated = categoryService.updateCategory(
-                categoryById.get(), categoryDtoMapper.toDomain(categoryRequest));
+        Category updated = categoryService.updateCategory(id, categoryDtoMapper.toDomain(categoryRequest));
         return ResponseEntity.ok(categoryDtoMapper.toResponse(updated));
     }
 
@@ -139,19 +104,13 @@ public class CategoryControllerAdapter {
             @PathVariable Long id,
             @RequestParam(defaultValue = "false") boolean hard) {
 
-        // 404 Not Found
-        Optional<Category> categoryById = categoryService.getCategoryById(id);
-        if (categoryById.isEmpty()) throw new CategoryNotFoundException(id);
-
         // 204 No Content
         if (hard) {
-            categoryService.hardDeleteCategory(categoryById.get());
-            return ResponseEntity.noContent().build();
+            categoryService.hardDeleteCategory(id);
+        } else {
+            categoryService.softDeleteCategory(id);
         }
-
-        // 200 OK
-        Category deleted = categoryService.softDeleteCategory(categoryById.get());
-        return ResponseEntity.ok(categoryDtoMapper.toResponse(deleted));
+        return ResponseEntity.noContent().build();
     }
 
 }

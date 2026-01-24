@@ -1,4 +1,4 @@
-package com.pixelpolo.hexagon.infrastructure.config;
+package com.pixelpolo.hexagon.common.config;
 
 import org.springframework.context.annotation.Configuration;
 
