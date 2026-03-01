@@ -10,72 +10,72 @@ import org.springframework.stereotype.Repository;
 import com.pixelpolo.hexagon.common.exception.category.CategoryNotFoundException;
 import com.pixelpolo.hexagon.domain.model.Category;
 import com.pixelpolo.hexagon.domain.port.out.CategoryRepositoryPort;
-import com.pixelpolo.hexagon.infrastructure.postgres.entity.CategoryEntity;
-import com.pixelpolo.hexagon.infrastructure.postgres.mapper.CategoryEntityMapper;
-import com.pixelpolo.hexagon.infrastructure.postgres.repository.CategoryJpaRepository;
+import com.pixelpolo.hexagon.infrastructure.postgres.entity.CategoryEntityJpa;
+import com.pixelpolo.hexagon.infrastructure.postgres.mapper.CategoryEntityMapperJpa;
+import com.pixelpolo.hexagon.infrastructure.postgres.repository.CategoryRepositoryJpa;
 
 import lombok.RequiredArgsConstructor;
 
 /**
  * Category repository as an ADAPTER-OUT in Hexagonal Architecture.
  * Implements the CategoryRepositoryPort PORT-OUT to interact with the persistence layer.
- * Uses CategoryJpaRepository for database operations (easy to swap with another implementation).
+ * Uses CategoryRepositoryJpa for database operations (easy to swap with another implementation).
  * Keeps the domain logic decoupled from external implementations.
  */
 @Repository
 @RequiredArgsConstructor
 @Profile("postgres")
-public class CategoryRepositoryAdapter implements CategoryRepositoryPort {
+public class CategoryRepositoryAdapterJpa implements CategoryRepositoryPort {
 
-    private final CategoryJpaRepository categoryJpaRepository;
-    private final CategoryEntityMapper categoryEntityMapper;
+    private final CategoryRepositoryJpa categoryRepositoryJpa;
+    private final CategoryEntityMapperJpa categoryEntityMapperJpa;
 
     @Override
     public Category persist(Category category) {
-        CategoryEntity entity = categoryEntityMapper.toEntity(category);
-        categoryJpaRepository.save(entity);
-        return categoryEntityMapper.toDomain(entity);
+        CategoryEntityJpa entity = categoryEntityMapperJpa.toEntity(category);
+        categoryRepositoryJpa.save(entity);
+        return categoryEntityMapperJpa.toDomain(entity);
     }
 
     @Override
     public Page<Category> findAll(Pageable pageable) {
-        Page<CategoryEntity> entities = categoryJpaRepository.findAllByDeletionDateIsNull(pageable);
-        return categoryEntityMapper.toDomainPage(entities);
+        Page<CategoryEntityJpa> entities = categoryRepositoryJpa.findAllByDeletionDateIsNull(pageable);
+        return categoryEntityMapperJpa.toDomainPage(entities);
     }
 
     @Override
     public Page<Category> findAllDeleted(Pageable pageable) {
-        Page<CategoryEntity> entities = categoryJpaRepository.findAllByDeletionDateIsNotNull(pageable);
-        return categoryEntityMapper.toDomainPage(entities);
+        Page<CategoryEntityJpa> entities = categoryRepositoryJpa.findAllByDeletionDateIsNotNull(pageable);
+        return categoryEntityMapperJpa.toDomainPage(entities);
     }
 
     @Override
     public Category findById(long id) {
-        CategoryEntity entity = categoryJpaRepository.findByCategoryIdAndDeletionDateIsNull(id)
+        CategoryEntityJpa entity = categoryRepositoryJpa.findByCategoryIdAndDeletionDateIsNull(id)
                 .orElseThrow(() -> new CategoryNotFoundException(id));
-        return categoryEntityMapper.toDomain(entity);
+        return categoryEntityMapperJpa.toDomain(entity);
     }
 
     @Override
     public Category findByName(String name) {
-        CategoryEntity entity = categoryJpaRepository.findByNameAndDeletionDateIsNull(name)
+        CategoryEntityJpa entity = categoryRepositoryJpa.findByNameAndDeletionDateIsNull(name)
                 .orElseThrow(() -> new CategoryNotFoundException(name));
-        return categoryEntityMapper.toDomain(entity);
+        return categoryEntityMapperJpa.toDomain(entity);
     }
 
     @Override
     public void softDelete(long id) {
-        CategoryEntity entity = categoryJpaRepository.findById(id)
+        CategoryEntityJpa entity = categoryRepositoryJpa.findById(id)
                 .orElseThrow(() -> new CategoryNotFoundException(id));
         entity.setDeletionDate(LocalDateTime.now());
-        categoryJpaRepository.save(entity);
+        categoryRepositoryJpa.save(entity);
     }
 
     @Override
     public void hardDelete(long id) {
-        CategoryEntity entity = categoryJpaRepository.findById(id)
+        CategoryEntityJpa entity = categoryRepositoryJpa.findById(id)
                 .orElseThrow(() -> new CategoryNotFoundException(id));
-        categoryJpaRepository.delete(entity);
+        categoryRepositoryJpa.delete(entity);
     }
 
 }

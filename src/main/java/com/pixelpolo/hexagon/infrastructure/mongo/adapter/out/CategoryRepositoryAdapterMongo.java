@@ -10,74 +10,74 @@ import org.springframework.stereotype.Repository;
 import com.pixelpolo.hexagon.common.exception.category.CategoryNotFoundException;
 import com.pixelpolo.hexagon.domain.model.Category;
 import com.pixelpolo.hexagon.domain.port.out.CategoryRepositoryPort;
-import com.pixelpolo.hexagon.infrastructure.mongo.entity.CategoryMongoEntity;
-import com.pixelpolo.hexagon.infrastructure.mongo.mapper.CategoryEntityMongoMapper;
-import com.pixelpolo.hexagon.infrastructure.mongo.repository.CategoryMongoRepository;
+import com.pixelpolo.hexagon.infrastructure.mongo.entity.CategoryEntityMongo;
+import com.pixelpolo.hexagon.infrastructure.mongo.mapper.CategoryEntityMapperMongo;
+import com.pixelpolo.hexagon.infrastructure.mongo.repository.CategoryRepositoryMongo;
 
 import lombok.RequiredArgsConstructor;
 
 /**
  * Category repository as an ADAPTER-OUT in Hexagonal Architecture.
  * Implements the CategoryRepositoryPort PORT-OUT to interact with the persistence layer.
- * Uses CategoryMongoRepository for database operations (easy to swap with another implementation).
+ * Uses CategoryRepositoryMongo for database operations (easy to swap with another implementation).
  * Keeps the domain logic decoupled from external implementations.
  */
 @Repository
 @RequiredArgsConstructor
 @Profile("mongo")
-public class CategoryRepositoryMongoAdapter implements CategoryRepositoryPort {
+public class CategoryRepositoryAdapterMongo implements CategoryRepositoryPort {
 
-    private final CategoryMongoRepository categoryMongoRepository;
-    private final CategoryEntityMongoMapper categoryMongoEntityMapper;
+    private final CategoryRepositoryMongo categoryRepositoryMongo;
+    private final CategoryEntityMapperMongo categoryEntityMapperMongo;
 
     @Override
     public Category persist(Category category) {
-        CategoryMongoEntity entity = categoryMongoEntityMapper.toEntity(category);
+        CategoryEntityMongo entity = categoryEntityMapperMongo.toEntity(category);
         if (entity.getCategoryId() == null) {
             entity.setCategoryId(System.currentTimeMillis());
         }
-        categoryMongoRepository.save(entity);
-        return categoryMongoEntityMapper.toDomain(entity);
+        categoryRepositoryMongo.save(entity);
+        return categoryEntityMapperMongo.toDomain(entity);
     }
 
     @Override
     public Page<Category> findAll(Pageable pageable) {
-        Page<CategoryMongoEntity> entities = categoryMongoRepository.findAllByDeletionDateIsNull(pageable);
-        return categoryMongoEntityMapper.toDomainPage(entities);
+        Page<CategoryEntityMongo> entities = categoryRepositoryMongo.findAllByDeletionDateIsNull(pageable);
+        return categoryEntityMapperMongo.toDomainPage(entities);
     }
 
     @Override
     public Page<Category> findAllDeleted(Pageable pageable) {
-        Page<CategoryMongoEntity> entities = categoryMongoRepository.findAllByDeletionDateIsNotNull(pageable);
-        return categoryMongoEntityMapper.toDomainPage(entities);
+        Page<CategoryEntityMongo> entities = categoryRepositoryMongo.findAllByDeletionDateIsNotNull(pageable);
+        return categoryEntityMapperMongo.toDomainPage(entities);
     }
 
     @Override
     public Category findById(long id) {
-        CategoryMongoEntity entity = categoryMongoRepository.findByCategoryIdAndDeletionDateIsNull(id)
+        CategoryEntityMongo entity = categoryRepositoryMongo.findByCategoryIdAndDeletionDateIsNull(id)
                 .orElseThrow(() -> new CategoryNotFoundException(id));
-        return categoryMongoEntityMapper.toDomain(entity);
+        return categoryEntityMapperMongo.toDomain(entity);
     }
 
     @Override
     public Category findByName(String name) {
-        CategoryMongoEntity entity = categoryMongoRepository.findByNameAndDeletionDateIsNull(name)
+        CategoryEntityMongo entity = categoryRepositoryMongo.findByNameAndDeletionDateIsNull(name)
                 .orElseThrow(() -> new CategoryNotFoundException(name));
-        return categoryMongoEntityMapper.toDomain(entity);
+        return categoryEntityMapperMongo.toDomain(entity);
     }
 
     @Override
     public void softDelete(long id) {
-        CategoryMongoEntity entity = categoryMongoRepository.findById(id)
+        CategoryEntityMongo entity = categoryRepositoryMongo.findById(id)
                 .orElseThrow(() -> new CategoryNotFoundException(id));
         entity.setDeletionDate(LocalDateTime.now());
-        categoryMongoRepository.save(entity);
+        categoryRepositoryMongo.save(entity);
     }
 
     @Override
     public void hardDelete(long id) {
-        CategoryMongoEntity entity = categoryMongoRepository.findById(id)
+        CategoryEntityMongo entity = categoryRepositoryMongo.findById(id)
                 .orElseThrow(() -> new CategoryNotFoundException(id));
-        categoryMongoRepository.delete(entity);
+        categoryRepositoryMongo.delete(entity);
     }
 }

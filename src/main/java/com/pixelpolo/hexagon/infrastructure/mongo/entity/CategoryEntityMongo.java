@@ -23,7 +23,7 @@ import lombok.ToString;
 @NoArgsConstructor
 @Builder
 @Document(collection = "category")
-public class CategoryMongoEntity {
+public class CategoryEntityMongo {
 
     @Id
     private Long categoryId;
