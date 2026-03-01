@@ -10,6 +10,7 @@ networks:
 # ---------------
 volumes:
   hexagon_db_data:
+  hexagon_mongo_data:
 
 # ----------------
 # --- SERVICES ---
@@ -32,6 +33,29 @@ services:
       - hexagon-network
     ports:
       - "5432:5432"
+    logging:
+      driver: "json-file"
+      options:
+        max-size: "10m"
+        max-file: "5"
+
+  # ---------------
+  # --- MONGODB ---
+  # ---------------
+  hexagon_mongo:
+    image: mongo:latest
+    container_name: hexagon_mongo
+    restart: always
+    environment:
+      MONGO_INITDB_ROOT_USERNAME: ${MONGO_USER}
+      MONGO_INITDB_ROOT_PASSWORD: ${MONGO_PASSWORD}
+      MONGO_INITDB_DATABASE: hexagon_mongo
+    volumes:
+      - hexagon_mongo_data:/data/db
+    networks:
+      - hexagon-network
+    ports:
+      - "27017:27017"
     logging:
       driver: "json-file"
       options:
