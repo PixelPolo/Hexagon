@@ -6,7 +6,7 @@ import org.springframework.data.domain.Pageable;
 import com.pixelpolo.hexagon.domain.model.Category;
 
 /**
- * Category Service Interface as a PORT-IN in Hexagonal Architecture.
+ * Category Service Interface as a PORT IN of the Hexagonal Architecture.
  * Defines the operations related to Category management.
  * Keeps the domain logic decoupled from external implementations.
  */

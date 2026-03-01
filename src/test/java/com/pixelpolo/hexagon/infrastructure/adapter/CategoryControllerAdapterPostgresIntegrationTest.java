@@ -1,4 +1,4 @@
-package com.pixelpolo.hexagon.infrastructure.adapter.in;
+package com.pixelpolo.hexagon.infrastructure.adapter;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.hamcrest.Matchers.hasSize;
@@ -39,7 +39,7 @@ import org.testcontainers.junit.jupiter.Testcontainers;
 @Testcontainers
 @AutoConfigureMockMvc
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.MOCK)
-class CategoryControllerAdapterIntegrationTest {
+class CategoryControllerAdapterPostgresIntegrationTest {
 
     /*
      * --- TEST CONTAINERS SETUP ---

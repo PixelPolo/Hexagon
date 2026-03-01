@@ -1,4 +1,4 @@
-package com.pixelpolo.hexagon.infrastructure.adapter.in;
+package com.pixelpolo.hexagon.infrastructure.adapter;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.ArgumentMatchers.anyList;
@@ -20,7 +20,7 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 
-import com.pixelpolo.hexagon.application.adapter.in.CategoryControllerAdapter;
+import com.pixelpolo.hexagon.application.adapter.CategoryControllerAdapter;
 import com.pixelpolo.hexagon.application.dto.CategoryRequest;
 import com.pixelpolo.hexagon.application.dto.CategoryResponse;
 import com.pixelpolo.hexagon.application.mapper.CategoryDtoMapper;

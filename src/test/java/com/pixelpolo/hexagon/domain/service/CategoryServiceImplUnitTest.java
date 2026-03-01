@@ -24,11 +24,11 @@ import com.pixelpolo.hexagon.domain.port.out.CategoryRepositoryPort;
 @ExtendWith(MockitoExtension.class)
 public class CategoryServiceImplUnitTest {
 
-    // Only mocking the PORT-OUT dependency
+    // Only mocking the PORT OUT dependency
     @Mock
     private CategoryRepositoryPort categoryRepository;
 
-    // Testing the PORT-IN implementation
+    // Testing the PORT IN implementation
     private CategoryServiceImpl categoryService;
 
     @BeforeEach

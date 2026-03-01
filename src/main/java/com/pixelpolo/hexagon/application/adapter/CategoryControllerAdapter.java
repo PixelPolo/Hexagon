@@ -1,4 +1,4 @@
-package com.pixelpolo.hexagon.application.adapter.in;
+package com.pixelpolo.hexagon.application.adapter;
 
 import java.net.URI;
 import java.util.List;
@@ -28,8 +28,8 @@ import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 
 /**
- * Category REST Controller as an ADAPTER-IN in Hexagonal Architecture.
- * Uses the CategoryServicePort PORT-IN to access the domain.
+ * Category REST Controller as an ADAPTER IN of the Hexagonal Architecture.
+ * Uses the CategoryServicePort PORT IN to access the domain.
  * Keeps the domain logic decoupled from external implementations.
  */
 @RestController

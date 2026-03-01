@@ -14,8 +14,8 @@ import lombok.RequiredArgsConstructor;
 
 /**
  * Domain service implementation for Category management.
- * Implements the CategoryServicePort (port-in) to provide business operations.
- * Uses CategoryRepositoryPort (port-out) to interact with persistence layer.
+ * Implements the CategoryServicePort (PORT IN) to provide business operations.
+ * Uses CategoryRepositoryPort (PORT OUT) to interact with persistence layer.
  */
 @Service
 @RequiredArgsConstructor

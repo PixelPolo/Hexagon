@@ -1,4 +1,4 @@
-package com.pixelpolo.hexagon.infrastructure.postgres.adapter.out;
+package com.pixelpolo.hexagon.infrastructure.postgres.adapter;
 
 import java.time.LocalDateTime;
 
@@ -17,8 +17,8 @@ import com.pixelpolo.hexagon.infrastructure.postgres.repository.CategoryReposito
 import lombok.RequiredArgsConstructor;
 
 /**
- * Category repository as an ADAPTER-OUT in Hexagonal Architecture.
- * Implements the CategoryRepositoryPort PORT-OUT to interact with the persistence layer.
+ * Category repository as an ADAPTER OUT of the Hexagonal Architecture.
+ * Implements the CategoryRepositoryPort PORT OUT to interact with the persistence layer.
  * Uses CategoryRepositoryJpa for database operations (easy to swap with another implementation).
  * Keeps the domain logic decoupled from external implementations.
  */
