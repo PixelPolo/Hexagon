@@ -6,7 +6,7 @@ import org.springframework.data.domain.Pageable;
 import com.pixelpolo.hexagon.domain.model.Category;
 
 /**
- * Category Repository Interface as a PORT-OUT in Hexagonal Architecture.
+ * Category Repository Interface as a PORT OUT of the Hexagonal Architecture.
  * Defines the operations for data persistence related to Category management.
  * Keeps the domain logic decoupled from external implementations.
  */

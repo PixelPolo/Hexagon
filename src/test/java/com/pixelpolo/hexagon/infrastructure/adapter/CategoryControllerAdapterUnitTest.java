@@ -1,4 +1,9 @@
-package com.pixelpolo.hexagon.infrastructure.adapter.in;
+package com.pixelpolo.hexagon.infrastructure.adapter;
+
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.mockito.ArgumentMatchers.anyList;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
 
 import java.util.List;
 
@@ -15,7 +20,7 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 
-import com.pixelpolo.hexagon.application.adapter.in.CategoryControllerAdapter;
+import com.pixelpolo.hexagon.application.adapter.CategoryControllerAdapter;
 import com.pixelpolo.hexagon.application.dto.CategoryRequest;
 import com.pixelpolo.hexagon.application.dto.CategoryResponse;
 import com.pixelpolo.hexagon.application.mapper.CategoryDtoMapper;
@@ -23,11 +28,6 @@ import com.pixelpolo.hexagon.common.utils.LocationUtils;
 import com.pixelpolo.hexagon.common.utils.PaginationUtils;
 import com.pixelpolo.hexagon.domain.model.Category;
 import com.pixelpolo.hexagon.domain.port.in.CategoryServicePort;
-
-import static org.assertj.core.api.Assertions.assertThat;
-import static org.mockito.ArgumentMatchers.anyList;
-import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.when;
 
 /**
  * Unit tests for CategoryControllerAdapter.

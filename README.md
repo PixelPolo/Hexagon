@@ -1,20 +1,26 @@
 # Hexagon
 
 Simple CRUD application with a hexagonal architecture.  
+Swagger UI: http://localhost:8080/swagger-ui/index.html
+
+## Profile "postgres"
 - Spring Boot with Flyway, JPA and PostgreSQL.
 - Integration test with Testcontainers and flyway migrations.
 - Unit test with JUnit and Mockito.
 
-Swagger UI: http://localhost:8080/swagger-ui/index.html
-
-## TODOs
-
-- Implement Product resource with the same architecture
+## Profile "mongo"
+- Spring Boot with MongoDB.
+- Integration test with Testcontainers and MongoDB.
+- Unit test with JUnit and Mockito.
 
 ## Flow diagram
 
-`Goal`: Isolate the domain.  
-`How`: Define ports and adapters.  
+`Goal`
+- Isolate the domain.
+
+`How`: 
+- Define ports and adapters.
+
 `Benefits`:
 - The domain (business logic) uses interfaces (ports) that are easy to mock.
 - The infrastructure and application (adapters) implements these interfaces (ports), allowing easy swapping  
@@ -30,12 +36,12 @@ Detailled flow:
 ```
 # Example for REST API with database
 
-Controller (adapter in from APPLICATION) 
-    -> ServicePort (port in from DOMAIN) 
-        -> ServiceImpl (service from DOMAIN) 
-            -> RepositoryPort (port out from DOMAIN) 
-                -> RepositoryAdapter (adapter out from INFRASTRUCTURE) 
-                    -> uses JPA Repository (technical detail from INFRASTRUCTURE)
+Controller (ADAPTER IN from APPLICATION) 
+    -> ServicePort (PORT IN from DOMAIN) 
+        -> ServiceImpl (SERVICE from DOMAIN) 
+            -> RepositoryPort (PORT OUT from DOMAIN) 
+                -> RepositoryAdapter (ADAPTER OUT from INFRASTRUCTURE) 
+                    -> uses Repository (implementation from INFRASTRUCTURE)
                         -> interacts with Database
 ```
 
@@ -52,8 +58,7 @@ Hexagonal pattern:
 hexagon
 │
 ├── application:    [Handles application-level concerns like DTOs, exception handling, mapping, and validation]
-│   └── adapter
-│       └── in          CategoryControllerAdapter implements REST endpoints, uses CategoryServicePort
+│   └── adapter (in)    CategoryControllerAdapter for REST endpoints, uses CategoryServicePort
 │   └── dto             CategoryRequest, CategoryResponse
 │   └── exception       GlogalExceptionHandler
 │   └── mapper          CategoryDtoMapper
@@ -67,12 +72,13 @@ hexagon
 │   └── service         CategoryServiceImpl implements CategoryServicePort, uses CategoryRepositoryPort
 │
 ├── infrastructure: [Implementation details for interacting with external systems]
-│   └── adapter
-│       └── out         CategoryRepositoryAdapter implements CategoryRepositoryPort, uses JPA Repository
-│   └── entity          CategoryEntity
-│   └── mapper          CategoryEntityMapper
-│   └── repository      JPA Repository interfaces
-│   └── utils           Utility classes
+│   └── postgres        
+│       └── adapter (out)   CategoryRepositoryAdapterJpa implements CategoryRepositoryPort, uses CategoryRepositoryJpa
+│       └── entity          CategoryEntityJpa
+│       └── mapper          CategoryEntityMapperJpa
+│       └── repository      CategoryRepositoryJpa
+|   └── mongo
+│       └── ...             Same structure as postgres but with MongoDB implementations
 |
 └── common:         [Shared resources across layers]
     └── config          Spring configurations
@@ -89,6 +95,8 @@ Set up a `.env` file with the following variables:
 ```env
 POSTGRES_USER=hexagon_user
 POSTGRES_PASSWORD=hexagon_password
+MONGO_USER=hexagon_user
+MONGO_PASSWORD=hexagon_password
 ```
 
 ```bash
@@ -104,6 +112,10 @@ docker compose up -d --build --force-recreate
 docker compose down -v --rmi all
 docker system prune -a --volumes
 ```
+
+## TODOs
+
+- Implement Product resource with the same architecture
 
 ## Copyright
 

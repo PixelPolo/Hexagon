@@ -1,5 +1,9 @@
 package com.pixelpolo.hexagon.domain.service;
 
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
+
 import java.util.List;
 
 import org.junit.jupiter.api.BeforeEach;
@@ -17,18 +21,14 @@ import com.pixelpolo.hexagon.common.exception.category.CategoryNotFoundException
 import com.pixelpolo.hexagon.domain.model.Category;
 import com.pixelpolo.hexagon.domain.port.out.CategoryRepositoryPort;
 
-import static org.assertj.core.api.Assertions.assertThat;
-import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.when;
-
 @ExtendWith(MockitoExtension.class)
 public class CategoryServiceImplUnitTest {
 
-    // Only mocking the PORT-OUT dependency
+    // Only mocking the PORT OUT dependency
     @Mock
     private CategoryRepositoryPort categoryRepository;
 
-    // Testing the PORT-IN implementation
+    // Testing the PORT IN implementation
     private CategoryServiceImpl categoryService;
 
     @BeforeEach

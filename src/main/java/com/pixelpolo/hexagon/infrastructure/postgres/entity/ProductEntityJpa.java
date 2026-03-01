@@ -1,4 +1,8 @@
-package com.pixelpolo.hexagon.infrastructure.entity;
+package com.pixelpolo.hexagon.infrastructure.postgres.entity;
+
+import java.time.LocalDateTime;
+
+import org.hibernate.annotations.CreationTimestamp;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
@@ -16,10 +20,6 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 import lombok.ToString;
 
-import java.time.LocalDateTime;
-
-import org.hibernate.annotations.CreationTimestamp;
-
 /**
  * Entity representing a Product in the database.
  */
@@ -31,7 +31,7 @@ import org.hibernate.annotations.CreationTimestamp;
 @Builder
 @Entity
 @Table(name = "\"product\"")
-public class ProductEntity {
+public class ProductEntityJpa {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -40,7 +40,7 @@ public class ProductEntity {
 
     @ManyToOne(fetch = FetchType.LAZY, optional = false)
     @JoinColumn(name = "category_id", nullable = false)
-    private CategoryEntity category;
+    private CategoryEntityJpa category;
 
     @Column(length = 128, nullable = false, unique = true)
     private String name;
