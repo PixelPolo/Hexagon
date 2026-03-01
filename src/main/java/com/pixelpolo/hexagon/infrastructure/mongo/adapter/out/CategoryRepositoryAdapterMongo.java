@@ -80,4 +80,5 @@ public class CategoryRepositoryAdapterMongo implements CategoryRepositoryPort {
                 .orElseThrow(() -> new CategoryNotFoundException(id));
         categoryRepositoryMongo.delete(entity);
     }
+
 }
