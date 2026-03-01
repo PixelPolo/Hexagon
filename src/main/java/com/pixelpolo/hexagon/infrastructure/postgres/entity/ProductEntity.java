@@ -1,5 +1,9 @@
 package com.pixelpolo.hexagon.infrastructure.postgres.entity;
 
+import java.time.LocalDateTime;
+
+import org.hibernate.annotations.CreationTimestamp;
+
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.FetchType;
@@ -15,10 +19,6 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 import lombok.ToString;
-
-import java.time.LocalDateTime;
-
-import org.hibernate.annotations.CreationTimestamp;
 
 /**
  * Entity representing a Product in the database.

@@ -1,5 +1,10 @@
 package com.pixelpolo.hexagon.infrastructure.adapter.in;
 
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.mockito.ArgumentMatchers.anyList;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
+
 import java.util.List;
 
 import org.junit.jupiter.api.BeforeEach;
@@ -23,11 +28,6 @@ import com.pixelpolo.hexagon.common.utils.LocationUtils;
 import com.pixelpolo.hexagon.common.utils.PaginationUtils;
 import com.pixelpolo.hexagon.domain.model.Category;
 import com.pixelpolo.hexagon.domain.port.in.CategoryServicePort;
-
-import static org.assertj.core.api.Assertions.assertThat;
-import static org.mockito.ArgumentMatchers.anyList;
-import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.when;
 
 /**
  * Unit tests for CategoryControllerAdapter.

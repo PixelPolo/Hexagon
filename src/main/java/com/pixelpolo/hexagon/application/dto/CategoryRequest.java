@@ -1,11 +1,11 @@
 package com.pixelpolo.hexagon.application.dto;
 
+import com.pixelpolo.hexagon.application.validation.ValidationMessage;
+
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
 import lombok.Data;
-
-import com.pixelpolo.hexagon.application.validation.ValidationMessage;
 
 /**
  * DTO for creating or updating a category.

@@ -1,8 +1,5 @@
 package com.pixelpolo.hexagon.application.adapter.in;
 
-import jakarta.validation.Valid;
-import lombok.RequiredArgsConstructor;
-
 import java.net.URI;
 import java.util.List;
 
@@ -22,10 +19,13 @@ import org.springframework.web.bind.annotation.RestController;
 import com.pixelpolo.hexagon.application.dto.CategoryRequest;
 import com.pixelpolo.hexagon.application.dto.CategoryResponse;
 import com.pixelpolo.hexagon.application.mapper.CategoryDtoMapper;
-import com.pixelpolo.hexagon.domain.model.Category;
-import com.pixelpolo.hexagon.domain.port.in.CategoryServicePort;
 import com.pixelpolo.hexagon.common.utils.LocationUtils;
 import com.pixelpolo.hexagon.common.utils.PaginationUtils;
+import com.pixelpolo.hexagon.domain.model.Category;
+import com.pixelpolo.hexagon.domain.port.in.CategoryServicePort;
+
+import jakarta.validation.Valid;
+import lombok.RequiredArgsConstructor;
 
 /**
  * Category REST Controller as an ADAPTER-IN in Hexagonal Architecture.

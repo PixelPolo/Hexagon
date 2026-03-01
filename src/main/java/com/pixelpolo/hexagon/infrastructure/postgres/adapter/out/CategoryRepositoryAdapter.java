@@ -1,7 +1,5 @@
 package com.pixelpolo.hexagon.infrastructure.postgres.adapter.out;
 
-import lombok.RequiredArgsConstructor;
-
 import java.time.LocalDateTime;
 
 import org.springframework.context.annotation.Profile;
@@ -15,6 +13,8 @@ import com.pixelpolo.hexagon.domain.port.out.CategoryRepositoryPort;
 import com.pixelpolo.hexagon.infrastructure.postgres.entity.CategoryEntity;
 import com.pixelpolo.hexagon.infrastructure.postgres.mapper.CategoryEntityMapper;
 import com.pixelpolo.hexagon.infrastructure.postgres.repository.CategoryJpaRepository;
+
+import lombok.RequiredArgsConstructor;
 
 /**
  * Category repository as an ADAPTER-OUT in Hexagonal Architecture.

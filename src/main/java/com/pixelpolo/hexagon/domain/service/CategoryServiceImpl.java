@@ -1,7 +1,5 @@
 package com.pixelpolo.hexagon.domain.service;
 
-import lombok.RequiredArgsConstructor;
-
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
@@ -11,6 +9,8 @@ import com.pixelpolo.hexagon.common.exception.category.CategoryNotFoundException
 import com.pixelpolo.hexagon.domain.model.Category;
 import com.pixelpolo.hexagon.domain.port.in.CategoryServicePort;
 import com.pixelpolo.hexagon.domain.port.out.CategoryRepositoryPort;
+
+import lombok.RequiredArgsConstructor;
 
 /**
  * Domain service implementation for Category management.
