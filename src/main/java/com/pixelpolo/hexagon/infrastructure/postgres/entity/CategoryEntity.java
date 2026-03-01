@@ -16,7 +16,7 @@ import lombok.ToString;
 import java.time.LocalDateTime;
 
 /**
- * Entity representing a Category in the database.
+ * Entity representing a Category in the PostgreSQL database.
  */
 @Getter
 @Setter
