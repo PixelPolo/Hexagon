@@ -4,6 +4,7 @@ import lombok.RequiredArgsConstructor;
 
 import java.time.LocalDateTime;
 
+import org.springframework.context.annotation.Profile;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Repository;
@@ -23,6 +24,7 @@ import com.pixelpolo.hexagon.infrastructure.postgres.repository.CategoryJpaRepos
  */
 @Repository
 @RequiredArgsConstructor
+@Profile("postgres")
 public class CategoryRepositoryAdapter implements CategoryRepositoryPort {
 
     private final CategoryJpaRepository categoryJpaRepository;

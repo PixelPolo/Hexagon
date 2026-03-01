@@ -35,7 +35,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
  * No HTTP calls are actually made through the network, the DispatcherServlet handles them in-memory.
  * All beans (services, repositories, JPA) use real implementations without mocks.
  */
-@ActiveProfiles("test")
+@ActiveProfiles({"test", "postgres"})
 @Testcontainers
 @AutoConfigureMockMvc
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.MOCK)
