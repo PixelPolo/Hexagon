@@ -103,10 +103,17 @@
             <artifactId>spring-boot-starter-webmvc-test</artifactId>
             <scope>test</scope>
         </dependency>
-        <!-- TEST CONTAINER TEST SCOPE -->
+        <!-- POSTGRESQL TEST CONTAINER TEST SCOPE -->
         <dependency>
             <groupId>org.testcontainers</groupId>
             <artifactId>postgresql</artifactId>
+            <version>1.21.4</version>
+            <scope>test</scope>
+        </dependency>
+        <!-- MONGODB TEST CONTAINER TEST SCOPE -->
+        <dependency>
+            <groupId>org.testcontainers</groupId>
+            <artifactId>mongodb</artifactId>
             <version>1.21.4</version>
             <scope>test</scope>
         </dependency>
