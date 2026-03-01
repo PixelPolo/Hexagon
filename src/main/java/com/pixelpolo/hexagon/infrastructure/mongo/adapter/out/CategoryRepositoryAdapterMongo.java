@@ -34,7 +34,7 @@ public class CategoryRepositoryAdapterMongo implements CategoryRepositoryPort {
     public Category persist(Category category) {
         CategoryEntityMongo entity = categoryEntityMapperMongo.toEntity(category);
         if (entity.getCategoryId() == null) {
-            entity.setCategoryId(System.currentTimeMillis());
+            entity.setCategoryId(System.currentTimeMillis()); // NoSql doesn't support auto-increment
         }
         categoryRepositoryMongo.save(entity);
         return categoryEntityMapperMongo.toDomain(entity);
