@@ -1,4 +1,4 @@
-package com.pixelpolo.hexagon.infrastructure.adapter.out;
+package com.pixelpolo.hexagon.infrastructure.postgres.adapter.out;
 
 import lombok.RequiredArgsConstructor;
 
@@ -11,9 +11,9 @@ import org.springframework.stereotype.Repository;
 import com.pixelpolo.hexagon.common.exception.category.CategoryNotFoundException;
 import com.pixelpolo.hexagon.domain.model.Category;
 import com.pixelpolo.hexagon.domain.port.out.CategoryRepositoryPort;
-import com.pixelpolo.hexagon.infrastructure.entity.CategoryEntity;
-import com.pixelpolo.hexagon.infrastructure.mapper.CategoryEntityMapper;
-import com.pixelpolo.hexagon.infrastructure.repository.CategoryJpaRepository;
+import com.pixelpolo.hexagon.infrastructure.postgres.entity.CategoryEntity;
+import com.pixelpolo.hexagon.infrastructure.postgres.mapper.CategoryEntityMapper;
+import com.pixelpolo.hexagon.infrastructure.postgres.repository.CategoryJpaRepository;
 
 /**
  * Category repository as an ADAPTER-OUT in Hexagonal Architecture.

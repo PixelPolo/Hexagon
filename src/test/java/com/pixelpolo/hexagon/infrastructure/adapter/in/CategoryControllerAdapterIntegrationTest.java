@@ -50,8 +50,6 @@ class CategoryControllerAdapterIntegrationTest {
 
     @Container
     private static final PostgreSQLContainer<?> PSQL_CONTAINER = new PostgreSQLContainer<>("postgres:latest");
-    @Autowired
-    private MockMvc mockMvc;
 
     /*
      * --- FLYWAY SETUP ---
@@ -64,6 +62,9 @@ class CategoryControllerAdapterIntegrationTest {
 
     @Autowired
     private Flyway flyway;
+
+    @Autowired
+    private MockMvc mockMvc;
 
     @DynamicPropertySource
     static void postgresqlProperties(DynamicPropertyRegistry registry) {

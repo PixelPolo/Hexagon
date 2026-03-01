@@ -1,10 +1,10 @@
-package com.pixelpolo.hexagon.infrastructure.mapper;
+package com.pixelpolo.hexagon.infrastructure.postgres.mapper;
 
 import org.mapstruct.Mapper;
 import org.springframework.data.domain.Page;
 
 import com.pixelpolo.hexagon.domain.model.Category;
-import com.pixelpolo.hexagon.infrastructure.entity.CategoryEntity;
+import com.pixelpolo.hexagon.infrastructure.postgres.entity.CategoryEntity;
 
 @Mapper(componentModel = "spring")
 public interface CategoryEntityMapper {

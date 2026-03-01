@@ -1,4 +1,4 @@
-package com.pixelpolo.hexagon.infrastructure.repository;
+package com.pixelpolo.hexagon.infrastructure.postgres.repository;
 
 import java.util.Optional;
 
@@ -6,7 +6,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 
-import com.pixelpolo.hexagon.infrastructure.entity.CategoryEntity;
+import com.pixelpolo.hexagon.infrastructure.postgres.entity.CategoryEntity;
 
 /**
  * JPA Repository interface for Category entity.

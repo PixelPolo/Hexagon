@@ -1,4 +1,4 @@
-package com.pixelpolo.hexagon.infrastructure.entity;
+package com.pixelpolo.hexagon.infrastructure.postgres.entity;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
