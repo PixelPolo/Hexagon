@@ -2,14 +2,14 @@
 # --- NETWORK ---
 # ---------------
 networks:
-  hexagon-network:
+  hexagon_network:
     driver: bridge
 
 # ---------------
 # --- VOLUMES ---
 # ---------------
 volumes:
-  hexagon_db_data:
+  hexagon_postgres_data:
   hexagon_mongo_data:
 
 # ----------------
@@ -19,18 +19,18 @@ services:
   # ----------------
   # --- POSTGRES ---
   # ----------------
-  hexagon_db:
+  hexagon_postgres:
     image: postgres:latest
-    container_name: hexagon_db
+    container_name: hexagon_postgres
     restart: always
     environment:
       POSTGRES_USER: ${POSTGRES_USER}
       POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
-      POSTGRES_DB: hexagon_db
+      POSTGRES_DB: hexagon_postgres_database
     volumes:
-      - hexagon_db_data:/var/lib/postgresql
+      - hexagon_postgres_data:/var/lib/postgresql
     networks:
-      - hexagon-network
+      - hexagon_network
     ports:
       - "5432:5432"
     logging:
@@ -49,11 +49,11 @@ services:
     environment:
       MONGO_INITDB_ROOT_USERNAME: ${MONGO_USER}
       MONGO_INITDB_ROOT_PASSWORD: ${MONGO_PASSWORD}
-      MONGO_INITDB_DATABASE: hexagon_mongo
+      MONGO_INITDB_DATABASE: hexagon_mongo_database
     volumes:
       - hexagon_mongo_data:/data/db
     networks:
-      - hexagon-network
+      - hexagon_network
     ports:
       - "27017:27017"
     logging:
@@ -74,18 +74,19 @@ services:
     environment:
       POSTGRES_USER: ${POSTGRES_USER}
       POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
-      POSTGRES_HOST: hexagon_db
-      POSTGRES_DATABASE: hexagon_db
+      POSTGRES_HOST: hexagon_postgres
+      POSTGRES_DATABASE: hexagon_postgres_database
       MONGO_USER: ${MONGO_USER}
       MONGO_PASSWORD: ${MONGO_PASSWORD}
       MONGO_HOST: hexagon_mongo
-      MONGO_DATABASE: hexagon_mongo
+      MONGO_DATABASE: hexagon_mongo_database
     ports:
       - "8080:8080"
     depends_on:
-      - hexagon_db
+      - hexagon_postgres
+      - hexagon_mongo
     networks:
-      - hexagon-network
+      - hexagon_network
     logging:
       driver: "json-file"
       options:

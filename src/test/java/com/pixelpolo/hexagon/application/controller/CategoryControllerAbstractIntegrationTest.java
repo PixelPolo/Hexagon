@@ -15,9 +15,13 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.boot.testcontainers.service.connection.ServiceConnection;
 import org.springframework.boot.webmvc.test.autoconfigure.AutoConfigureMockMvc;
 import org.springframework.test.web.servlet.MockMvc;
+import org.testcontainers.junit.jupiter.Container;
 import org.testcontainers.junit.jupiter.Testcontainers;
+import org.testcontainers.mongodb.MongoDBContainer;
+import org.testcontainers.postgresql.PostgreSQLContainer;
 
 /**
  * Abstract class of Integration tests for CategoryController.
@@ -30,10 +34,24 @@ import org.testcontainers.junit.jupiter.Testcontainers;
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.MOCK)
 public abstract class CategoryControllerAbstractIntegrationTest {
 
-    protected String baseUrl;
+    // --- TEST CONTAINERS SETUP ---
+    // Docker must be running.
+    // Static container shared across all tests.
+    // Seeding the database is made after each test with an utility class.
+
+    @Container
+    @ServiceConnection
+    protected static final MongoDBContainer MONGO_CONTAINER = new MongoDBContainer("mongo:latest");
+
+    @Container
+    @ServiceConnection
+    protected static final PostgreSQLContainer PSQL_CONTAINER = new PostgreSQLContainer("postgres:latest");
+
+    // --- TESTS SETUP ---
 
     @Value("${api.version}")
     private String apiVersion;
+    protected String baseUrl;
 
     @BeforeEach
     void setUp() {
@@ -41,10 +59,10 @@ public abstract class CategoryControllerAbstractIntegrationTest {
         resetDatabase();
     }
 
+    protected abstract void resetDatabase();
+
     @Autowired
     protected MockMvc mockMvc;
-
-    protected abstract void resetDatabase();
 
     // --- TESTS ---
 

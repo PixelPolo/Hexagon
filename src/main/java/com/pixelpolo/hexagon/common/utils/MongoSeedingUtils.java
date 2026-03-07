@@ -1,4 +1,4 @@
-package com.pixelpolo.hexagon.utils;
+package com.pixelpolo.hexagon.common.utils;
 
 import org.springframework.data.mongodb.core.MongoTemplate;
 

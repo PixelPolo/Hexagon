@@ -7,10 +7,6 @@ import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.context.ActiveProfiles;
-import org.springframework.test.context.DynamicPropertyRegistry;
-import org.springframework.test.context.DynamicPropertySource;
-import org.testcontainers.containers.PostgreSQLContainer;
-import org.testcontainers.junit.jupiter.Container;
 
 /**
  * Integration tests for CategoryController.<br>
@@ -20,21 +16,6 @@ import org.testcontainers.junit.jupiter.Container;
  */
 @ActiveProfiles({"test", "postgres"})
 class CategoryControllerPostgresIntegrationTest extends CategoryControllerAbstractIntegrationTest {
-
-    // --- TEST CONTAINERS SETUP ---
-    // Docker must be running.
-    // Static container shared across all tests.
-    // Non-static would recreate for each test class.
-
-    @Container
-    private static final PostgreSQLContainer<?> PSQL_CONTAINER = new PostgreSQLContainer<>("postgres:latest");
-
-    @DynamicPropertySource
-    static void postgresqlProperties(DynamicPropertyRegistry registry) {
-        registry.add("spring.datasource.url", PSQL_CONTAINER::getJdbcUrl);
-        registry.add("spring.datasource.username", PSQL_CONTAINER::getUsername);
-        registry.add("spring.datasource.password", PSQL_CONTAINER::getPassword);
-    }
 
     // --- TESTS SETUP ---
     // Ensure Flyway migrations are applied before each test

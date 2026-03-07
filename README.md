@@ -10,7 +10,7 @@ Swagger UI: http://localhost:8080/swagger-ui/index.html
 
 ## Profile "mongo"
 - Spring Boot with MongoDB.
-- Integration test with Testcontainers and MongoDB.
+- Integration test with Testcontainers and an utility class for migrations.
 - Unit test with JUnit and Mockito.
 
 ## Flow example for REST API with database
@@ -107,7 +107,6 @@ docker system prune -a --volumes
 
 ## TODOs
 
-- Fix MongoDB Testcontainers integration test (not running since properties changed)
 - Implement Product resource with the same architecture
 
 ## Copyright
