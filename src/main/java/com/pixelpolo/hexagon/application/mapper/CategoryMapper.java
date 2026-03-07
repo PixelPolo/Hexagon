@@ -12,7 +12,7 @@ import com.pixelpolo.hexagon.domain.model.Category;
  * Mapper interface for converting between Category and DTO.
  */
 @Mapper(componentModel = "spring")
-public interface CategoryDtoMapper {
+public interface CategoryMapper {
 
     CategoryResponse toResponse(Category category);
 
