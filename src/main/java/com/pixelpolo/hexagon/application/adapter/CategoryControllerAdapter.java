@@ -18,7 +18,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.pixelpolo.hexagon.application.dto.CategoryRequest;
 import com.pixelpolo.hexagon.application.dto.CategoryResponse;
-import com.pixelpolo.hexagon.application.mapper.CategoryDtoMapper;
+import com.pixelpolo.hexagon.application.mapper.CategoryMapper;
 import com.pixelpolo.hexagon.common.utils.LocationUtils;
 import com.pixelpolo.hexagon.common.utils.PaginationUtils;
 import com.pixelpolo.hexagon.domain.model.Category;
@@ -38,7 +38,7 @@ import lombok.RequiredArgsConstructor;
 public class CategoryControllerAdapter {
 
     private final CategoryServicePort categoryService;
-    private final CategoryDtoMapper categoryDtoMapper;
+    private final CategoryMapper categoryMapper;
     private final PaginationUtils paginationUtils;
     private final LocationUtils locationUtils;
 
@@ -52,7 +52,7 @@ public class CategoryControllerAdapter {
         // 200 OK
         PageRequest pageRequest = paginationUtils.buildPageRequest(page, size, sortBy, sortDir);
         Page<Category> categories = categoryService.getCategories(pageRequest);
-        return ResponseEntity.ok(categoryDtoMapper.toResponseList(categories.getContent()));
+        return ResponseEntity.ok(categoryMapper.toResponseList(categories.getContent()));
     }
 
     // GET /api/v_/categories/deleted?page=_&size=_&sortBy=_&sortDir=_
@@ -65,7 +65,7 @@ public class CategoryControllerAdapter {
         // 200 OK
         PageRequest pageRequest = paginationUtils.buildPageRequest(page, size, sortBy, sortDir);
         Page<Category> categories = categoryService.getDeletedCategories(pageRequest);
-        return ResponseEntity.ok(categoryDtoMapper.toResponseList(categories.getContent()));
+        return ResponseEntity.ok(categoryMapper.toResponseList(categories.getContent()));
     }
 
     // GET /api/v_/categories/{id}
@@ -74,7 +74,7 @@ public class CategoryControllerAdapter {
 
         // 200 OK
         Category category = categoryService.getCategoryById(id);
-        return ResponseEntity.ok(categoryDtoMapper.toResponse(category));
+        return ResponseEntity.ok(categoryMapper.toResponse(category));
     }
 
     // POST /api/v_/categories
@@ -82,9 +82,9 @@ public class CategoryControllerAdapter {
     public ResponseEntity<CategoryResponse> createCategory(@Valid @RequestBody CategoryRequest categoryRequest) {
 
         // 201 Created
-        Category created = categoryService.createCategory(categoryDtoMapper.toDomain(categoryRequest));
+        Category created = categoryService.createCategory(categoryMapper.toDomain(categoryRequest));
         URI location = locationUtils.getLocation(created.getCategoryId(), "categories");
-        return ResponseEntity.created(location).body(categoryDtoMapper.toResponse(created));
+        return ResponseEntity.created(location).body(categoryMapper.toResponse(created));
     }
 
     // PUT /api/v_/categories/{id}
@@ -94,8 +94,8 @@ public class CategoryControllerAdapter {
             @Valid @RequestBody CategoryRequest categoryRequest) {
 
         // 200 OK
-        Category updated = categoryService.updateCategory(id, categoryDtoMapper.toDomain(categoryRequest));
-        return ResponseEntity.ok(categoryDtoMapper.toResponse(updated));
+        Category updated = categoryService.updateCategory(id, categoryMapper.toDomain(categoryRequest));
+        return ResponseEntity.ok(categoryMapper.toResponse(updated));
     }
 
     // DELETE /api/v_/categories/{id}?hard=false
