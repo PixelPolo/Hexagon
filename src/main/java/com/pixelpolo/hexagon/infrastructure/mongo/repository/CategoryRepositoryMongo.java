@@ -5,6 +5,7 @@ import java.util.Optional;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.mongodb.repository.MongoRepository;
+import org.springframework.stereotype.Repository;
 
 import com.pixelpolo.hexagon.infrastructure.mongo.entity.CategoryEntityMongo;
 
@@ -12,6 +13,7 @@ import com.pixelpolo.hexagon.infrastructure.mongo.entity.CategoryEntityMongo;
  * MongoDB Repository interface for Category entity.
  * Extends MongoRepository to provide CRUD operations and pagination support.
  */
+@Repository
 public interface CategoryRepositoryMongo extends MongoRepository<CategoryEntityMongo, Long> {
 
     Page<CategoryEntityMongo> findAllByDeletionDateIsNull(Pageable pageable);

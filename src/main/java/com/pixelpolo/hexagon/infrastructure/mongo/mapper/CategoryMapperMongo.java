@@ -6,8 +6,11 @@ import org.springframework.data.domain.Page;
 import com.pixelpolo.hexagon.domain.model.Category;
 import com.pixelpolo.hexagon.infrastructure.mongo.entity.CategoryEntityMongo;
 
+/**
+ * Mapper interface for converting between Category domain model and CategoryEntityMongo.
+ */
 @Mapper(componentModel = "spring")
-public interface CategoryEntityMapperMongo {
+public interface CategoryMapperMongo {
 
     CategoryEntityMongo toEntity(Category category);
 

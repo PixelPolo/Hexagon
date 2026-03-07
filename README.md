@@ -13,82 +13,74 @@ Swagger UI: http://localhost:8080/swagger-ui/index.html
 - Integration test with Testcontainers and MongoDB.
 - Unit test with JUnit and Mockito.
 
-## Flow diagram
-
-`Goal`
-- Isolate the domain.
-
-`How`: 
-- Define ports and adapters.
-
-`Benefits`:
-- The domain (business logic) uses interfaces (ports) that are easy to mock.
-- The infrastructure and application (adapters) implements these interfaces (ports), allowing easy swapping  
-(e.g., changing databases or changing web clients without affecting the domain).
-
-### Example for REST API with database
+## Flow example for REST API with database
 ```
 Adapter [Controller from APPLICATION] <-> Port [Service from DOMAIN] <-> Adapter [Repository from INFRASTRUCTURE]
 ```
 
-Detailled flow:
+### Detailed flow:
 
 ```
 # Example for REST API with database
 
-Controller (ADAPTER IN from APPLICATION) 
-    -> ServicePort (PORT IN from DOMAIN) 
-        -> ServiceImpl (SERVICE from DOMAIN) 
-            -> RepositoryPort (PORT OUT from DOMAIN) 
-                -> RepositoryAdapter (ADAPTER OUT from INFRASTRUCTURE) 
-                    -> uses Repository (implementation from INFRASTRUCTURE)
-                        -> interacts with Database
+--- APPLICATION layer ---
+
+1. Controller (exposes endpoint, delegates to an Adapter)
+2. Adapter (uses PORT IN interface exposed by DOMAIN)
+
+--- DOMAIN layer ---
+
+3. Service (implements PORT IN with business logic, uses PORT OUT interface)
+
+--- INFRASTRUCTURE layer ---
+
+4. Adapter (implements PORT OUT, uses the repository for database interaction)
+5. Repository (implementation for database interaction)
 ```
 
 ## Folder structure
 
-This structure takes only the Category resource of the project.  
-Hexagonal pattern:
-- Domain exposes PORT IN and PORT OUT
-- Domain service implements PORT IN and uses PORT OUT
-- Application ADAPTER IN uses PORT IN implemented by Domain service
-- Infrastructure ADAPTER OUT implements PORT OUT used by Domain service
-
 ```
 hexagon
 │
-├── application:    [Handles application-level concerns like DTOs, exception handling, mapping, and validation]
-│   └── adapter (in)    CategoryControllerAdapter for REST endpoints, uses CategoryServicePort
-│   └── dto             CategoryRequest, CategoryResponse
-│   └── exception       GlogalExceptionHandler
-│   └── mapper          CategoryDtoMapper
-│   └── validation      ValidationMessage for dto validation
+├── application:        [Entry point for the application, exposing APIs, handling requests]
+│   └── adapter             Uses the domain port called UseCase, called by the controller
+│   └── controller          REST Controller, delegates to the adapter
+│   └── dto                 Request and Response DTOs
+│   └── exception           Global handler
+│   └── mapper              Between DTOs and domain models
+│   └── validation          For request DTOs
 │
-├── domain:         [Core business logic and rules]
-│   └── model           Category domain model
+├── domain:             [Core business logic and rules]
+│   └── model               Category domain model
 │   └── port
-│       └── in          CategoryServicePort interface
-│       └── out         CategoryRepositoryPort interface
-│   └── service         CategoryServiceImpl implements CategoryServicePort, uses CategoryRepositoryPort
+│       └── in              Called UseCase, used by an adapter in the application layer
+│       └── out             Called Port, implemented by an adapter in the infrastructure layer
+│   └── service             Implements the UseCase to handle business logic, uses the Port for data persistence.
 │
-├── infrastructure: [Implementation details for interacting with external systems]
-│   └── postgres        
-│       └── adapter (out)   CategoryRepositoryAdapterJpa implements CategoryRepositoryPort, uses CategoryRepositoryJpa
-│       └── entity          CategoryEntityJpa
-│       └── mapper          CategoryEntityMapperJpa
-│       └── repository      CategoryRepositoryJpa
+├── infrastructure:     [Handles persistence]
+│   └── postgres            Provides PostgreSQL implementations for the Port defined in the domain layer
+│       └── adapter         Implements the Port of the domain layer, uses the repository for database interaction
+│       └── entity          JPA entity
+│       └── mapper          Mapper between domain model and entity
+│       └── repository      Spring Data JPA repository
 |   └── mongo
 │       └── ...             Same structure as postgres but with MongoDB implementations
 |
-└── common:         [Shared resources across layers]
-    └── config          Spring configurations
-    └── exception       NotFoundException, ExistException, BadRequestException, etc.
-    └── utils           Common utility classes
+└── common:             [Shared resources across layers]
+    └── config              Spring configurations
+    └── exception           NotFoundException, ExistException, BadRequestException, etc.
+    └── utils               Common utility classes
 ```
 
-Note: In some projects, the "port in" are called "use cases", and the "port out" are called "gateways".
-
 ## Run
+
+Set the profile in `application.properties`
+
+```properties
+#spring.profiles.active=postgres
+spring.profiles.active=mongo
+```
 
 Set up a `.env` file with the following variables:
 

@@ -6,8 +6,11 @@ import org.springframework.data.domain.Page;
 import com.pixelpolo.hexagon.domain.model.Category;
 import com.pixelpolo.hexagon.infrastructure.postgres.entity.CategoryEntityJpa;
 
+/**
+ * Mapper interface for converting between Category domain model and CategoryEntityJpa.
+ */
 @Mapper(componentModel = "spring")
-public interface CategoryEntityMapperJpa {
+public interface CategoryMapperJpa {
 
      CategoryEntityJpa toEntity(Category category);
 
