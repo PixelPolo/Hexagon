@@ -5,12 +5,14 @@ import com.pixelpolo.hexagon.application.validation.ValidationMessage;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
+import lombok.Builder;
 import lombok.Data;
 
 /**
  * DTO for creating or updating a category.
  */
 @Data
+@Builder
 public class CategoryRequest {
 
     @NotNull(message = ValidationMessage.NOT_NULL)

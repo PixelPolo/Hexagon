@@ -1,4 +1,4 @@
-package com.pixelpolo.hexagon.infrastructure.adapter;
+package com.pixelpolo.hexagon.application.controller;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
@@ -16,11 +16,11 @@ import com.pixelpolo.hexagon.infrastructure.mongo.entity.CategoryEntityMongo;
 import com.pixelpolo.hexagon.utils.MongoSeedingUtils;
 
 /**
- * Integration tests for CategoryControllerAdapter.
+ * Integration tests for CategoryController.
  * It uses Testcontainers to spin up a MongoDB database for testing.
  */
 @ActiveProfiles({"test", "mongo"})
-public class CategoryControllerAdapterMongoIntegrationTest extends CategoryControllerAbstractIntegrationTest {
+public class CategoryControllerMongoIntegrationTest extends CategoryControllerAbstractIntegrationTest {
 
     // --- TEST CONTAINERS SETUP ---
     // Docker must be running.

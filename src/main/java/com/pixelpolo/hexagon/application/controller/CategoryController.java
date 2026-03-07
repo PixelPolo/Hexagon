@@ -1,9 +1,8 @@
-package com.pixelpolo.hexagon.application.adapter;
+package com.pixelpolo.hexagon.application.controller;
 
 import java.net.URI;
 import java.util.List;
 
-import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -16,29 +15,25 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.pixelpolo.hexagon.application.adapter.CategoryAdapter;
 import com.pixelpolo.hexagon.application.dto.CategoryRequest;
 import com.pixelpolo.hexagon.application.dto.CategoryResponse;
-import com.pixelpolo.hexagon.application.mapper.CategoryMapper;
 import com.pixelpolo.hexagon.common.utils.LocationUtils;
 import com.pixelpolo.hexagon.common.utils.PaginationUtils;
-import com.pixelpolo.hexagon.domain.model.Category;
-import com.pixelpolo.hexagon.domain.port.in.CategoryServicePort;
 
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 
 /**
- * Category REST Controller as an ADAPTER IN of the Hexagonal Architecture.
- * Uses the CategoryServicePort PORT IN to access the domain.
- * Keeps the domain logic decoupled from external implementations.
+ * Category REST Controller.
+ * Handles HTTP requests for Category operations and delegates to the CategoryAdapter.
  */
 @RestController
 @RequestMapping("/api/${api.version}/categories")
 @RequiredArgsConstructor
-public class CategoryControllerAdapter {
+public class CategoryController {
 
-    private final CategoryServicePort categoryService;
-    private final CategoryMapper categoryMapper;
+    private final CategoryAdapter categoryAdapter;
     private final PaginationUtils paginationUtils;
     private final LocationUtils locationUtils;
 
@@ -48,11 +43,8 @@ public class CategoryControllerAdapter {
             @RequestParam(defaultValue = "0") int page, @RequestParam(defaultValue = "10") int size,
             @RequestParam(defaultValue = "categoryId") String sortBy,
             @RequestParam(defaultValue = "asc") String sortDir) {
-
-        // 200 OK
         PageRequest pageRequest = paginationUtils.buildPageRequest(page, size, sortBy, sortDir);
-        Page<Category> categories = categoryService.getCategories(pageRequest);
-        return ResponseEntity.ok(categoryMapper.toResponseList(categories.getContent()));
+        return ResponseEntity.ok(categoryAdapter.getAllCategories(pageRequest));
     }
 
     // GET /api/v_/categories/deleted?page=_&size=_&sortBy=_&sortDir=_
@@ -61,30 +53,22 @@ public class CategoryControllerAdapter {
             @RequestParam(defaultValue = "0") int page, @RequestParam(defaultValue = "10") int size,
             @RequestParam(defaultValue = "categoryId") String sortBy,
             @RequestParam(defaultValue = "asc") String sortDir) {
-
-        // 200 OK
         PageRequest pageRequest = paginationUtils.buildPageRequest(page, size, sortBy, sortDir);
-        Page<Category> categories = categoryService.getDeletedCategories(pageRequest);
-        return ResponseEntity.ok(categoryMapper.toResponseList(categories.getContent()));
+        return ResponseEntity.ok(categoryAdapter.getAllDeletedCategories(pageRequest));
     }
 
     // GET /api/v_/categories/{id}
     @GetMapping("/{id}")
     public ResponseEntity<CategoryResponse> getCategoryById(@PathVariable Long id) {
-
-        // 200 OK
-        Category category = categoryService.getCategoryById(id);
-        return ResponseEntity.ok(categoryMapper.toResponse(category));
+        return ResponseEntity.ok(categoryAdapter.getCategoryById(id));
     }
 
     // POST /api/v_/categories
     @PostMapping
     public ResponseEntity<CategoryResponse> createCategory(@Valid @RequestBody CategoryRequest categoryRequest) {
-
-        // 201 Created
-        Category created = categoryService.createCategory(categoryMapper.toDomain(categoryRequest));
+        CategoryResponse created = categoryAdapter.createCategory(categoryRequest);
         URI location = locationUtils.getLocation(created.getCategoryId(), "categories");
-        return ResponseEntity.created(location).body(categoryMapper.toResponse(created));
+        return ResponseEntity.created(location).body(created);
     }
 
     // PUT /api/v_/categories/{id}
@@ -92,10 +76,7 @@ public class CategoryControllerAdapter {
     public ResponseEntity<CategoryResponse> updateCategory(
             @PathVariable Long id,
             @Valid @RequestBody CategoryRequest categoryRequest) {
-
-        // 200 OK
-        Category updated = categoryService.updateCategory(id, categoryMapper.toDomain(categoryRequest));
-        return ResponseEntity.ok(categoryMapper.toResponse(updated));
+        return ResponseEntity.ok(categoryAdapter.updateCategory(id, categoryRequest));
     }
 
     // DELETE /api/v_/categories/{id}?hard=false
@@ -103,12 +84,10 @@ public class CategoryControllerAdapter {
     public ResponseEntity<CategoryResponse> deleteCategory(
             @PathVariable Long id,
             @RequestParam(defaultValue = "false") boolean hard) {
-
-        // 204 No Content
         if (hard) {
-            categoryService.hardDeleteCategory(id);
+            categoryAdapter.hardDeleteCategory(id);
         } else {
-            categoryService.softDeleteCategory(id);
+            categoryAdapter.softDeleteCategory(id);
         }
         return ResponseEntity.noContent().build();
     }

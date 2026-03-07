@@ -1,4 +1,4 @@
-package com.pixelpolo.hexagon.infrastructure.adapter;
+package com.pixelpolo.hexagon.application.controller;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
@@ -13,13 +13,13 @@ import org.testcontainers.containers.PostgreSQLContainer;
 import org.testcontainers.junit.jupiter.Container;
 
 /**
- * Integration tests for CategoryControllerAdapter.<br>
+ * Integration tests for CategoryController.<br>
  * It uses Testcontainers to spin up a PostgreSQL database for testing.<br>
  * <a href="https://java.testcontainers.org/test_framework_integration/junit_5/#extension">Testcontainers documentation</a><br>
  * <a href="https://medium.com/@turanulus/how-to-write-an-integration-test-with-testcontainers-and-postgresql-67425e124753">Interesting article</a><br>
  */
 @ActiveProfiles({"test", "postgres"})
-class CategoryControllerAdapterPostgresIntegrationTest extends CategoryControllerAbstractIntegrationTest {
+class CategoryControllerPostgresIntegrationTest extends CategoryControllerAbstractIntegrationTest {
 
     // --- TEST CONTAINERS SETUP ---
     // Docker must be running.

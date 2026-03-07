@@ -1,4 +1,4 @@
-package com.pixelpolo.hexagon.infrastructure.adapter;
+package com.pixelpolo.hexagon.application.controller;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.hamcrest.Matchers.hasSize;
@@ -20,7 +20,7 @@ import org.springframework.test.web.servlet.MockMvc;
 import org.testcontainers.junit.jupiter.Testcontainers;
 
 /**
- * Abstract class of Integration tests for CategoryControllerAdapter.
+ * Abstract class of Integration tests for CategoryController.
  * Spring Boot Test framework is used with MockMvc for HTTP request simulation.
  * No HTTP calls are actually made through the network, the DispatcherServlet handles them in-memory.
  * All beans (services, repositories, JPA) use real implementations without mocks.

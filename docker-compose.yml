@@ -76,6 +76,10 @@ services:
       POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
       POSTGRES_HOST: hexagon_db
       POSTGRES_DATABASE: hexagon_db
+      MONGO_USER: ${MONGO_USER}
+      MONGO_PASSWORD: ${MONGO_PASSWORD}
+      MONGO_HOST: hexagon_mongo
+      MONGO_DATABASE: hexagon_mongo
     ports:
       - "8080:8080"
     depends_on:
