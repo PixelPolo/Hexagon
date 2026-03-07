@@ -107,6 +107,7 @@ docker system prune -a --volumes
 
 ## TODOs
 
+- Fix MongoDB Testcontainers integration test (not running since properties changed)
 - Implement Product resource with the same architecture
 
 ## Copyright
